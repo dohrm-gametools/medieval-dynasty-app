@@ -2,7 +2,11 @@ import React from 'react';
 import {useTable, usePagination, useSortBy} from 'react-table';
 import {Pagination, Table} from "semantic-ui-react";
 
-const ItemTable = ({items, columns, page: routerPage, pageChanged}) => {
+const ItemTable = ({items, columns, page: routerPage, sort: routerSort, queryChanged}) => {
+  const routerSortBy = [];
+  if (routerSort !== '') {
+    routerSortBy.push({id: routerSort.replace('-', ''), desc: routerSort.indexOf('-') === 0})
+  }
   const {
     getTableProps,
     getTableBodyProps,
@@ -11,19 +15,21 @@ const ItemTable = ({items, columns, page: routerPage, pageChanged}) => {
     page,
     pageCount,
     gotoPage,
-    state: {pageIndex},
+    state: {pageIndex, sortBy},
   } = useTable({
       columns,
       data: items,
-      initialState: {pageIndex: routerPage},
+      initialState: {pageIndex: routerPage, sortBy: routerSortBy},
     },
     useSortBy,
     usePagination,
   );
+  const sort = sortBy.length === 0 ? '' : `${sortBy[0].desc ? '-' : ''}${sortBy[0].id}`;
+  React.useEffect(() => {
+    queryChanged(pageIndex, sort);
+  }, [sortBy])
   const handlePageChange = (e, {activePage}) => {
-    if (pageChanged) {
-      pageChanged(activePage - 1);
-    }
+    queryChanged(activePage - 1, sort);
     gotoPage(activePage - 1);
   }
   return (

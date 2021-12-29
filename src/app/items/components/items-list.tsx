@@ -7,20 +7,21 @@ import { default as ItemTableBase } from './item-table';
 export interface Props {
   items: Array<Item>;
   page: number;
-  pageChanged?: (newPage: number) => any;
+  sort: string;
+  queryChanged: (page: number, sort: string) => any;
 }
 
 const ItemTable = ItemTableBase as React.ComponentType<{ columns: Array<Column<Item>> } | Props>;
 
 
-const ItemsList: React.ComponentType<Props> = ({ items, page, pageChanged }) => {
+const ItemsList: React.ComponentType<Props> = (props) => {
   const { t, lang } = useI18n();
   const columns = React.useMemo<Array<Column<Item>>>(() => [
-    { Header: t('items.headers.category'), accessor: d => t(`items.category.${d.category.valueOf()}`) },
-    { Header: t('items.headers.name'), accessor: d => d.i18n[lang] },
-    { Header: t('items.headers.durability'), accessor: d => d.durability },
-    { Header: t('items.headers.weight'), accessor: d => d.weight },
-    { Header: t('items.headers.price'), accessor: d => d.price },
+    { id: 'category', Header: t('items.headers.category'), accessor: d => t(`items.category.${d.category.valueOf()}`) },
+    { id: 'name', Header: t('items.headers.name'), accessor: d => d.i18n[lang] },
+    { id: 'durability', Header: t('items.headers.durability'), accessor: d => d.durability },
+    { id: 'weight', Header: t('items.headers.weight'), accessor: d => d.weight },
+    { id: 'price', Header: t('items.headers.price'), accessor: d => d.price },
     // { Header: t('items.headers.damage'), accessor: d => d.damage },
     // { Header: t('items.headers.poisoning'), accessor: d => d.poisoning },
     // { Header: t('items.headers.extraction'), accessor: d => d.extraction },
@@ -42,7 +43,7 @@ const ItemsList: React.ComponentType<Props> = ({ items, page, pageChanged }) => 
     // { Header: t('items.headers.duration'), accessor: d => d.duration },
   ], [lang])
 
-  return <ItemTable items={items} columns={columns} page={page} pageChanged={pageChanged}/>
+  return <ItemTable columns={columns} {...props}/>
 };
 
 export default ItemsList;

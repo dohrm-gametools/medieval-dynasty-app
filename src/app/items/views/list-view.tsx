@@ -10,9 +10,10 @@ const ListView: React.ComponentType = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const loaded = useSelector((state: State) => state.items.loaded);
   const items = useSelector((state: State) => state.items.items);
+  const sort = searchParams.get('sort');
   const page = searchParams.get('page');
-  const pageChanged = (page: number) => {
-    setSearchParams({ page: (page + 1).toString() })
+  const queryChanged = (page: number, sort: string) => {
+    setSearchParams({ page: (page + 1).toString(), sort: sort })
   }
 
   React.useEffect(() => {
@@ -25,7 +26,12 @@ const ListView: React.ComponentType = () => {
       <Dimmer active={!loaded}>
         <Loader content="Loading"/>
       </Dimmer>
-      <ItemsList items={items} page={page && parseInt(page) - 1 || 0} pageChanged={pageChanged}/>
+      <ItemsList
+        items={items}
+        page={page && parseInt(page) - 1 || 0}
+        sort={sort || ''}
+        queryChanged={queryChanged}
+      />
     </>
   )
 };
