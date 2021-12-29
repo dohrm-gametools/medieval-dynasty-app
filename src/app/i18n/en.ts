@@ -1,7 +1,20 @@
 const en = {
+  lang: {
+    en: 'English',
+    fr: 'French',
+  },
   menu: {
-    items: {
-      title: 'Items',
+    database: {
+      title: 'Data',
+      items: {
+        title: 'Items'
+      },
+      buildings: {
+        title: 'Buildings'
+      }
+    },
+    games: {
+      title: 'Game management',
     },
     languages: {
       title: 'Language',
@@ -11,17 +24,39 @@ const en = {
       }
     }
   },
-  lang: {
-    en: 'English',
-    fr: 'French',
+  buildings: {
+    table: {
+      headers: {
+        category: 'Category',
+        name: 'Name',
+        tax: 'Tax value',
+        storage: 'Storage capacity',
+        worker: 'Worker number',
+      }
+    },
+    category: {
+      House: 'House',
+      Extraction: 'Extraction',
+      Hunting: 'Hunting',
+      Farming: 'Farming',
+      AnimalHusbandry: 'Animal husbandry',
+      Production: 'Production',
+      Service: 'Service',
+      Storage: 'Storage',
+    },
   },
   items: {
-    headers: {
-      category: 'Category',
-      name: 'Name',
-      durability: 'Durability',
-      weight: 'Weight',
-      price: 'Price',
+    table: {
+      headers: {
+        category: 'Category',
+        name: 'Name',
+        durability: 'Durability',
+        weight: 'Weight',
+        price: 'Price',
+      },
+    },
+    pagination: {
+      pageSize: 'Item per page '
     },
     category: {
       clothes: 'Clothes',

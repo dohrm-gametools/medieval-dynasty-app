@@ -3,14 +3,15 @@ import { default as rawFr } from './fr';
 import { default as rawEn } from './en';
 
 
-function flatten(value: any): { [key: string]: string } {
-  const result: { [key: string]: string } = {};
+function flatten(value: any): { [ key: string ]: string } {
+  const result: { [ key: string ]: string } = {};
   const reduce = (v: any, path: string) => {
+    console.log(path);
     if (typeof v === 'string') {
-      result[path] = v;
+      result[ path ] = v;
     } else {
       Object.keys(v || {}).forEach(k => {
-        reduce(v[k], path === '' ? k : `${path}.${k}`);
+        reduce(v[ k ], path === '' ? k : `${ path }.${ k }`);
       });
     }
   }
@@ -21,17 +22,17 @@ function flatten(value: any): { [key: string]: string } {
 const fr = flatten(rawFr);
 const en = flatten(rawEn);
 
-const translations: { [lang: string]: { [key: string]: string } } = { fr, en };
+const translations: { [ lang: string ]: { [ key: string ]: string } } = { fr, en };
 
 export interface ReducerState {
   lang: string;
   supportedLanguages: Array<string>;
-  translations: { [key: string]: string },
+  translations: { [ key: string ]: string },
 }
 
 const initialState: ReducerState = {
   lang: 'fr', // TODO Read locale storage to retrieve this information & accept-header
-  supportedLanguages: ['fr', 'en'],
+  supportedLanguages: [ 'fr', 'en' ],
   translations: fr,
 }
 
@@ -42,7 +43,7 @@ const slice = createSlice({
     setSelectedLang(state, action: PayloadAction<string>) {
       if (state.supportedLanguages.includes(action.payload)) {
         state.lang = action.payload;
-        state.translations = translations[action.payload] || {};
+        state.translations = translations[ action.payload ] || {};
       }
     }
   },

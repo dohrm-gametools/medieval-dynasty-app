@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum Kind {
   Clothes = 'clothes',
   Consumable = 'consumable',
@@ -7,26 +6,14 @@ export enum Kind {
   Tools = 'tools',
 }
 
-export enum Tool {
-  Hammer = 'hammer',
-  Knife = 'knife',
-  Axe = 'axe',
-  Hoe = 'hoe',
-  Shovel = 'shovel',
-  Sickle = 'sickle',
-  Scythe = 'scythe',
-  Pickaxe = 'pickaxe',
-  ShearingScissors = 'shearing-scissors',
-}
-
 export interface Item {
   id: string;
   category: Kind;
   durability: number;
   weight: number;
   price: number;
-  i18n: { [lang: string]: string };
-  tool?: Tool;
+  i18n: { [ lang: string ]: string };
+  tool?: string;
   damage?: number;
   poisoning?: number;
   extraction?: number;
@@ -51,6 +38,8 @@ export interface Item {
 const data = require('./data.json') as Array<Item>;
 
 export const Items: Array<Item> = data;
+export const ItemsById: { [ id: string ]: Item } = data.reduce((acc, c) => ({ ...acc, [ c.id ]: c }), {});
+
 export const Tools: Array<Item> = data.filter(v => v.category.valueOf() === Kind.Tools.valueOf());
 export const Crafting: Array<Item> = data.filter(v => v.category.valueOf() === Kind.Crafting.valueOf());
 export const Clothes: Array<Item> = data.filter(v => v.category.valueOf() === Kind.Clothes.valueOf());
