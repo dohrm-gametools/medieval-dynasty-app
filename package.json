@@ -6,6 +6,7 @@
   "scripts": {
     "prebuild": "run-s clean",
     "build": "parcel build src/index.html --no-source-maps --public-url ./",
+    "postbuild": "cp dist/index.html dist/404.html",
     "clean": "rimraf ./dist",
     "start:app": "parcel src/index.html --open",
     "start": "run-p start:*"
