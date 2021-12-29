@@ -2,6 +2,7 @@ Medieval dynasty app
 ====================
 
 Working database generator : [https://1drv.ms/x/s!AuZjavc6kHflge0VpLI4wNHQUooSkg?e=mK4KgH](https://1drv.ms/x/s!AuZjavc6kHflge0VpLI4wNHQUooSkg?e=mK4KgH)
+Link to pages : [https://dohrm-gametools.github.io/medieval-dynasty-app/](https://dohrm-gametools.github.io/medieval-dynasty-app/)
 
 TODO
 -------
