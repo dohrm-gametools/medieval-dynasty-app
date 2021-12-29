@@ -1,11 +1,20 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 // App
 import { appStore } from '~/src/app-config';
 import { MainLayout } from '~/src/app/main/components'
 import { ListView as ItemsView } from '~/src/app/items';
+
+const Redirect: React.ComponentType<{ to: string }> = ({ to }) => {
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    navigate(to);
+  })
+  return null;
+}
 
 const Application = () => (
   <Provider store={appStore}>
@@ -13,6 +22,7 @@ const Application = () => (
       <Routes>
         <Route path="/" element={<MainLayout menus={[{ key: 'items', link: "/items" }]}/>}>
           <Route path="items" element={<ItemsView/>}/>
+          <Route index element={<Redirect to="/items"/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

@@ -4,9 +4,16 @@ import { Item } from '~/src/api';
 import { useI18n } from '~/src/app/i18n';
 import { default as ItemTableBase } from './item-table';
 
-const ItemTable = ItemTableBase as React.ComponentType<{ data: Array<Item>, columns: Array<Column<Item>> }>;
+export interface Props {
+  items: Array<Item>;
+  page: number;
+  pageChanged?: (newPage: number) => any;
+}
 
-const ItemsList: React.ComponentType<{ items: Array<Item> }> = ({ items }) => {
+const ItemTable = ItemTableBase as React.ComponentType<{ columns: Array<Column<Item>> } | Props>;
+
+
+const ItemsList: React.ComponentType<Props> = ({ items, page, pageChanged }) => {
   const { t, lang } = useI18n();
   const columns = React.useMemo<Array<Column<Item>>>(() => [
     { Header: t('items.headers.category'), accessor: d => t(`items.category.${d.category.valueOf()}`) },
@@ -35,7 +42,7 @@ const ItemsList: React.ComponentType<{ items: Array<Item> }> = ({ items }) => {
     // { Header: t('items.headers.duration'), accessor: d => d.duration },
   ], [lang])
 
-  return <ItemTable data={items} columns={columns}/>
+  return <ItemTable items={items} columns={columns} page={page} pageChanged={pageChanged}/>
 };
 
 export default ItemsList;

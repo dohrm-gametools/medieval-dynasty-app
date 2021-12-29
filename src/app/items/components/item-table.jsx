@@ -2,7 +2,7 @@ import React from 'react';
 import {useTable, usePagination, useSortBy} from 'react-table';
 import {Pagination, Table} from "semantic-ui-react";
 
-const ItemTable = ({data, columns}) => {
+const ItemTable = ({items, columns, page: routerPage, pageChanged}) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -14,13 +14,18 @@ const ItemTable = ({data, columns}) => {
     state: {pageIndex},
   } = useTable({
       columns,
-      data,
-      initialState: {pageIndex: 0},
+      data: items,
+      initialState: {pageIndex: routerPage},
     },
     useSortBy,
     usePagination,
   );
-  const handlePageChange = (e, {activePage}) => gotoPage(activePage - 1);
+  const handlePageChange = (e, {activePage}) => {
+    if (pageChanged) {
+      pageChanged(activePage - 1);
+    }
+    gotoPage(activePage - 1);
+  }
   return (
     <Table celled {...getTableProps()}>
       <Table.Header>
