@@ -6,7 +6,6 @@ import { default as rawEn } from './en';
 function flatten(value: any): { [ key: string ]: string } {
   const result: { [ key: string ]: string } = {};
   const reduce = (v: any, path: string) => {
-    console.log(path);
     if (typeof v === 'string') {
       result[ path ] = v;
     } else {
