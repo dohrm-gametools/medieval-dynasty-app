@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 // App
 import { appStore } from '~/src/app-config';
 import { MainLayout } from '~/src/app/main/components'
-import { ListView as ItemsView } from '~/src/app/items';
+import { ItemsListView } from '~/src/app/items';
 
 const Redirect: React.ComponentType<{ to: string }> = ({ to }) => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Application = () => (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout menus={[{ key: 'items', link: "/items" }]}/>}>
-          <Route path="items" element={<ItemsView/>}/>
+          <Route path="items" element={<ItemsListView/>}/>
           <Route index element={<Redirect to="/items"/>}/>
         </Route>
       </Routes>

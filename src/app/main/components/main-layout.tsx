@@ -42,7 +42,7 @@ export const MainLayout: React.ComponentType<{ menus?: Array<{ key: string, link
         </Container>
       </Menu>
 
-      <Container text style={{ paddingTop: '7em' }}>
+      <Container fluid style={{ paddingTop: '7em' }}>
         <Outlet/>
       </Container>
 

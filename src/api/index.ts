@@ -2,7 +2,7 @@ import * as items from './items';
 
 export { Item, Kind, Tool } from './items'
 
-export namespace ItemsApi {
+export module ItemsApi {
   // TODO Write real api maybe with parameters.
   export function fetchAll(): Promise<Array<items.Item>> {
     return Promise.resolve(items.Items);
@@ -25,4 +25,3 @@ export namespace ItemsApi {
   }
 }
 
-export namespace Buildings {}
