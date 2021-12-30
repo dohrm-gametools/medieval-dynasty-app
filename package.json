@@ -5,7 +5,7 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "prebuild": "run-s clean",
-    "build": "parcel build src/index.html --no-source-maps --public-url ./",
+    "build": "parcel build src/index.html --no-source-maps --public-url https://dohrm-gametools.github.io/medieval-dynasty-app/",
     "postbuild": "cp dist/index.html dist/404.html",
     "clean": "rimraf ./dist",
     "start:app": "parcel src/index.html --open",
