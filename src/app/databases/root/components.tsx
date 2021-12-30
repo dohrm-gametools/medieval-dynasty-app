@@ -9,12 +9,13 @@ const DatabaseRootComponent: React.ComponentType<{ rootPath: string }> = ({ root
   return (
     <>
       <Grid.Column width="3">
-        <Menu vertical borderless fixed="left" style={ { top: '37px' } }>
+        <Menu vertical borderless fixed="left" style={ { top: '44px' } } inverted>
           <Menu.Item>
             <Menu.Header>Databases</Menu.Header>
             <Menu.Menu>
               <Menu.Item active={ pathname === `${ rootPath }/buildings` } as={ Link } to={ `${ rootPath }/buildings` }>{ t('menu.database.buildings.title') }</Menu.Item>
               <Menu.Item active={ pathname === `${ rootPath }/items` } as={ Link } to={ `${ rootPath }/items` }>{ t('menu.database.items.title') }</Menu.Item>
+              <Menu.Item active={ pathname === `${ rootPath }/productions` } as={ Link } to={ `${ rootPath }/productions` }>{ t('menu.database.productions.title') }</Menu.Item>
             </Menu.Menu>
           </Menu.Item>
         </Menu>

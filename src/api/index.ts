@@ -3,7 +3,7 @@ import * as buildings from './buildings';
 import * as productions from './productions';
 
 export { Building, Kind as BuildingKing } from './buildings';
-export { Item, Kind as ItemKind, Tool } from './items'
+export { Item, Kind as ItemKind } from './items'
 export { Production } from './productions'
 
 export module ItemsApi {

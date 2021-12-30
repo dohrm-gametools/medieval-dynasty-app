@@ -22,6 +22,9 @@ const fr = {
       },
       buildings: {
         title: 'Batiments'
+      },
+      productions: {
+        title: 'Productions'
       }
     },
     games: {
@@ -72,6 +75,15 @@ const fr = {
       crafting: 'Artisanat',
       miscellaneous: 'Divers',
       tools: 'Outils',
+    },
+  },
+  productions: {
+    table: {
+      headers: {
+        name: 'Objet produit',
+        recipe: 'Ingredients',
+        producedIn: 'Produit dans',
+      }
     },
   },
   pagination: {

@@ -1,13 +1,23 @@
-import { Item, ItemsById } from '../items';
+import { ItemsById } from '../items';
+import { BuildingsById } from '../buildings';
 
-export interface ItemWithCount {
-  item: Item;
+export interface WithI18n {
+  i18n: { [ lang: string ]: string }
+}
+
+export interface ItemWithCount extends WithI18n {
+  id: string;
   count: number;
 }
 
+export interface BuildingLight extends WithI18n {
+  id: string;
+}
+
 export interface Production {
-  item: Item;
-  buildingIds: Array<string>;
+  itemId: string;
+  i18n: { [ lang: string ]: string };
+  producedIn: Array<BuildingLight>;
   stack: number;
   producedPerDay: number;
   seasons: Array<string>;
@@ -43,7 +53,14 @@ function toKeyValue(value: string): { key: string, value: number } | null {
 function reduceItems(acc: Array<ItemWithCount>, c: string): Array<ItemWithCount> {
   const kv = toKeyValue(c);
   if (!kv || !ItemsById[ kv.key ]) return acc;
-  return [ ...acc, { item: ItemsById[ kv.key ], count: kv.value } ];
+  const item = ItemsById[ kv.key ];
+  return [ ...acc, { id: item.id, i18n: item.i18n, count: kv.value } ];
+}
+
+function reduceBuildings(acc: Array<BuildingLight>, c: string): Array<BuildingLight> {
+  const building = BuildingsById[ c ];
+  if (!building) return acc;
+  return [ ...acc, { id: building.id, i18n: building.i18n } ];
 }
 
 const data = (require('./data.json') as Array<ProductionRaw>).reduce<Array<Production>>((acc, c) => {
@@ -52,8 +69,9 @@ const data = (require('./data.json') as Array<ProductionRaw>).reduce<Array<Produ
   const otherProducedItems = c.otherProducedItems && toArray(c.otherProducedItems).reduce(reduceItems, []) || [];
   if (!item) return acc;
   return [ ...acc, {
-    item,
-    buildingIds: toArray(c.buildingIds),
+    itemId: c.itemId,
+    i18n: item.i18n,
+    producedIn: toArray(c.buildingIds).reduce(reduceBuildings, []),
     stack: c.stack,
     producedPerDay: c.producedPerDay,
     seasons: c.seasons ? toArray(c.seasons) : [],

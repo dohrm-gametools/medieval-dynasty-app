@@ -11,6 +11,9 @@ const en = {
       },
       buildings: {
         title: 'Buildings'
+      },
+      productions: {
+        title: 'Productions'
       }
     },
     games: {
@@ -65,7 +68,16 @@ const en = {
       miscellaneous: 'Miscellaneous',
       tools: 'Tools',
     },
-  }
+  },
+  productions: {
+    table: {
+      headers: {
+        name: 'Produced object',
+        recipe: 'Recipe',
+        producedIn: 'Produced in',
+      }
+    },
+  },
 }
 
 export default en;

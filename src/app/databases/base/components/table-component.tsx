@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { Table } from 'semantic-ui-react';
 import { HeaderGroup, Row, TableBodyProps, TableProps, } from 'react-table';
-import { Item } from '~/src/api';
 
 export interface Props {
   tableProps: TableProps;
   tableBodyProps: TableBodyProps;
-  headerGroups: Array<HeaderGroup<Item>>;
-  data: Array<Row<Item>>;
-  prepareRow: (row: Row<Item>) => any;
+  headerGroups: Array<HeaderGroup<any>>;
+  data: Array<Row<any>>;
+  prepareRow: (row: Row<any>) => any;
   sort: string;
   changeSort: (sort: string) => any;
 }
 
-const ItemsTable: React.ComponentType<Props> =
+const BuildingsTable: React.ComponentType<Props> =
   ({
      tableProps,
      tableBodyProps,
@@ -23,7 +22,7 @@ const ItemsTable: React.ComponentType<Props> =
      sort,
      changeSort,
    }) => (
-    <Table id="items-table" celled striped compact { ...tableProps } fixed sortable={ true }>
+    <Table id="items-table" celled striped compact inverted { ...tableProps } fixed sortable={ true }>
       <Table.Header fullWidth>
         { headerGroups.map(headerGroup => (
           <Table.Row { ...headerGroup.getHeaderGroupProps() }>
@@ -54,4 +53,4 @@ const ItemsTable: React.ComponentType<Props> =
     </Table>
   )
 
-export default ItemsTable;
+export default BuildingsTable;

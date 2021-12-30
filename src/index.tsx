@@ -9,6 +9,7 @@ import { MainLayout } from '~/src/app/main/components'
 import { DatabaseRootComponent } from '~/src/app/databases/root'
 import { ItemsListView } from '~/src/app/databases/items';
 import { BuildingsListView } from '~/src/app/databases/buildings';
+import { ProductionsListView } from '~/src/app/databases/productions';
 
 const Redirect: React.ComponentType<{ to: string }> = ({ to }) => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Application = () => (
           <Route path="databases" element={ <DatabaseRootComponent rootPath="/databases"/> }>
             <Route path="buildings" element={ <BuildingsListView/> }/>
             <Route path="items" element={ <ItemsListView/> }/>
+            <Route path="productions" element={ <ProductionsListView/> }/>
             <Route index element={ <Redirect to="/databases/buildings"/> }/>
           </Route>
           <Route index element={ <Redirect to="/games"/> }/>

@@ -1,39 +1,36 @@
 import * as React from 'react';
-import { Dimmer, Loader } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeParams, fetch, State } from '~/src/app/databases/buildings/reducer';
-import { default as BuildingsList } from '../components/buildings-list';
-import { useSearchParams } from 'react-router-dom';
+
+import { default as BaseListView } from '../../base/views/list-view'
+import { changeParams, fetch, reduxKey, selectors, reset } from '~/src/app/databases/buildings/reducer';
+import { Column } from 'react-table';
+import { Building } from '~/src/api';
+import { useI18n } from '~/src/app/i18n';
+
+const columnsFactory = (t: (key: string) => string, lang: string): Array<Column<Building>> => [
+  { id: 'category', Header: t('buildings.table.headers.category'), accessor: d => t(`buildings.category.${ d.category.valueOf() }`) },
+  { id: 'name', Header: t('buildings.table.headers.name'), accessor: d => d.i18n[ lang ] },
+  { id: 'tax', Header: t('buildings.table.headers.tax'), accessor: d => d.tax },
+  { id: 'storage', Header: t('buildings.table.headers.storage'), accessor: d => d.storage },
+  { id: 'worker', Header: t('buildings.table.headers.worker'), accessor: d => d.worker },
+];
 
 const BuildingsListView: React.ComponentType = () => {
-  const dispatch = useDispatch();
-  const [ searchParams, setSearchParams ] = useSearchParams();
-  const loaded = useSelector((state: State) => state.buildings.loaded);
-  const sort = searchParams.get('sort');
-  const page = searchParams.get('page');
-  const pageSize = searchParams.get('pageSize');
-  // Do binding with router.
-  const queryChanged = (page: number, sort: string, pageSize: number) => {
-    setSearchParams({ page: (page + 1).toString(), sort: sort, pageSize: pageSize.toString() })
-  }
-  React.useEffect(() => {
-    if (!loaded) {
-      dispatch(fetch());
-      dispatch(changeParams({
-        page: page && parseInt(page) - 1 || 0,
-        sort: sort || '' as any,
-        pageSize: pageSize && parseInt(pageSize) || 10,
-      }));
-    }
-  }, [ loaded ]);
+  const { t, lang } = useI18n();
+  const columns = React.useMemo<Array<Column<Building>>>(() => columnsFactory(t, lang), [ lang ]);
   return (
-    <>
-      <Dimmer active={ !loaded }>
-        <Loader content="Loading"/>
-      </Dimmer>
-      { loaded ? <BuildingsList queryChanged={ queryChanged }/> : null }
-    </>
-  )
-};
+    <BaseListView
+      reduxKey={ reduxKey }
+      columns={ columns }
+      paginatedItems={ selectors.paginatedItems }
+      sort={ selectors.sort }
+      page={ selectors.page }
+      pageSize={ selectors.pageSize }
+      totalCount={ selectors.totalCount }
+      changeParams={ changeParams }
+      fetch={ fetch }
+      reset={ reset }
+    />
+  );
+}
 
 export default BuildingsListView;
