@@ -7,6 +7,22 @@ export { Item, Kind as ItemKind } from './items'
 export { Production } from './productions'
 export * from './games';
 
+export module I18nApi {
+  export function load(): Promise<{ [ lang: string ]: { [ key: string ]: string } }> {
+    const result: { [ lang: string ]: { [ key: string ]: string } } = {};
+    const reduce = (category: string, res: typeof result, obj: { id: string, i18n: { [ lang: string ]: string } }) => {
+      return Object.keys(obj.i18n).reduce((acc, c) => {
+        return { ...acc, [ c ]: { ...(acc[ c ] || {}), [ `${ category }.${ obj.id }` ]: obj.i18n[ c ] } };
+      }, res)
+    }
+    return Promise.resolve(
+      buildings.Buildings.reduce((acc, c) => reduce('db.buildings', acc, c),
+        items.Items.reduce((acc, c) => reduce('db.items', acc, c), result)
+      )
+    );
+  }
+}
+
 export module ItemsApi {
   // TODO Write real api maybe with parameters.
   export function fetchAll(): Promise<Array<items.Item>> {

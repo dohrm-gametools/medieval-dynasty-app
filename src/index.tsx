@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 // App
 import { appStore } from '~/src/app-config';
 import { MainLayout } from '~/src/app/main/components'
+import { I18nLoader } from '~/src/app/i18n';
 import { GameView } from '~/src/app/game';
 
 import { DatabaseRootComponent } from '~/src/app/databases/root'
@@ -23,23 +24,25 @@ const Redirect: React.ComponentType<{ to: string }> = ({ to }) => {
 
 const Application = () => (
   <Provider store={ appStore }>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={ <MainLayout routes={ [
-          { key: 'menu.game.title', path: '/game' },
-          { key: 'menu.database.title', path: '/databases' },
-        ] }/> }>
-          <Route path="game" element={ <GameView rootPath="/game"/> }/>
-          <Route path="databases" element={ <DatabaseRootComponent rootPath="/databases"/> }>
-            <Route path="buildings" element={ <BuildingsListView/> }/>
-            <Route path="items" element={ <ItemsListView/> }/>
-            <Route path="productions" element={ <ProductionsListView/> }/>
-            <Route index element={ <Redirect to="/databases/buildings"/> }/>
+    <I18nLoader>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={ <MainLayout routes={ [
+            { key: 'menu.game.title', path: '/game' },
+            { key: 'menu.database.title', path: '/databases' },
+          ] }/> }>
+            <Route path="game" element={ <GameView rootPath="/game"/> }/>
+            <Route path="databases" element={ <DatabaseRootComponent rootPath="/databases"/> }>
+              <Route path="buildings" element={ <BuildingsListView/> }/>
+              <Route path="items" element={ <ItemsListView/> }/>
+              <Route path="productions" element={ <ProductionsListView/> }/>
+              <Route index element={ <Redirect to="/databases/buildings"/> }/>
+            </Route>
+            <Route index element={ <Redirect to="/game"/> }/>
           </Route>
-          <Route index element={ <Redirect to="/game"/> }/>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </I18nLoader>
   </Provider>
 );
 

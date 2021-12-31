@@ -1,11 +1,21 @@
 import { State as I18nState } from '~/src/app/i18n';
 import { ItemsApi, Item } from '~/src/api';
 
-import { initReducer, ReducerState as BaseReducerState } from '../base/reducer';
+import { defaultPaginateFunction, initReducer, ReducerState as BaseReducerState } from '../base/reducer';
 
 
 export const reduxKey = 'items';
-const { selectors, fetch, slice } = initReducer<Item>('databases/items', reduxKey, ItemsApi.fetchAll);
+const { selectors, fetch, slice } = initReducer<Item>(
+  'databases/items',
+  reduxKey,
+  ItemsApi.fetchAll,
+  (item, field, t) => {
+    if (field === 'name') {
+      return t(`db.items.${ item.id }`);
+    }
+    return defaultPaginateFunction(item, field, t);
+  }
+);
 
 export interface ReducerState extends BaseReducerState<Item> {}
 

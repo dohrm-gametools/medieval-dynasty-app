@@ -8,7 +8,7 @@ import { useI18n } from '~/src/app/i18n';
 
 const columnsFactory = (t: (key: string) => string, lang: string): Array<Column<Building>> => [
   { id: 'category', Header: t('app.database.buildings.table.headers.category'), accessor: d => t(`app.buildings.category.${ d.category.valueOf() }`) },
-  { id: 'name', Header: t('app.database.buildings.table.headers.name'), accessor: d => d.i18n[ lang ] },
+  { id: 'name', Header: t('app.database.buildings.table.headers.name'), accessor: d => t(`db.buildings.${ d.id }`) },
   { id: 'tax', Header: t('app.database.buildings.table.headers.tax'), accessor: d => d.tax },
   { id: 'storage', Header: t('app.database.buildings.table.headers.storage'), accessor: d => d.storage },
   { id: 'worker', Header: t('app.database.buildings.table.headers.worker'), accessor: d => d.worker },

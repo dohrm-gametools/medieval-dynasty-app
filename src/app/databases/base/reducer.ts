@@ -13,21 +13,16 @@ export interface ReducerState<Value> {
 
 export type ChangeParamsPayload<Value> = Omit<ReducerState<Value>, 'loaded' | 'items'>
 
-export type WithI18n = { i18n: { [ lang: string ]: string } }
-
-export function defaultPaginateFunction<Value extends WithI18n>(item: Value, field: string, lang: string): string {
-  if (field === 'name') {
-    return item.i18n[ lang ];
-  }
+export function defaultPaginateFunction<Value>(item: Value, field: string, t: (key: string) => string): string {
   // @ts-ignore
   return item[ field ];
 }
 
-export function initReducer<Value extends WithI18n>(
+export function initReducer<Value>(
   prefix: string,
   reduxKey: string,
   fetchAll: () => Promise<Array<Value>>,
-  paginateFunction: (item: Value, field: string, lang: string) => string = defaultPaginateFunction
+  paginateFunction: (item: Value, field: string, t: (key: string) => string) => string
 ) {
   const fetch = createAsyncThunk(
     `${ prefix }/fetchItems`,
@@ -78,7 +73,7 @@ export function initReducer<Value extends WithI18n>(
     loaded(state: State) { return state[ reduxKey ].loaded },
     paginatedItems(state: State) {
       return paginate(state[ reduxKey ].items.slice(), { sort: state[ reduxKey ].sort, pageSize: state[ reduxKey ].pageSize, page: state[ reduxKey ].page },
-        (item: Value, field) => paginateFunction(item, field, state.i18n.lang));
+        (item: Value, field) => paginateFunction(item, field, key => state.i18n.translations[ key ] || key));
     },
     page(state: State) { return state[ reduxKey ].page; },
     pageSize(state: State) { return state[ reduxKey ].pageSize; },

@@ -11,8 +11,7 @@ const DatabaseRootComponent: React.ComponentType<{ rootPath: string }> = ({ root
   return (
     <>
       <Grid.Column width="3">
-        <Menu text vertical>
-          <Menu.Item header>{ t('menu.database.title') }</Menu.Item>
+        <Menu vertical fluid tabular>
           { routes.map(route => (
             <Menu.Item
               key={ route }
