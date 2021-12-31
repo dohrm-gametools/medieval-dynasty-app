@@ -42,7 +42,7 @@ const fr: { [ key: string ]: string } = {
   'app.database.productions.table.headers.recipe': 'Ingredients',
   'app.database.productions.table.headers.producedIn': 'Produit dans',
   // Games
-  'app.game.tabs.worker': 'Travailleur',
+  'app.game.tabs.workers': 'Travailleurs',
   'app.game.tabs.houses': 'Maisons',
   'app.game.tabs.fieldsOrOrchard': 'Champs & verger',
   'app.game.tabs.productionOrExtraction': 'Production & extraction',

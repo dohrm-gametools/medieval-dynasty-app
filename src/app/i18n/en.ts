@@ -42,7 +42,7 @@ const en = {
   'app.database.productions.table.headers.recipe': 'Recipe',
   'app.database.productions.table.headers.producedIn': 'Produced in',
   // Games
-  'app.game.tabs.worker': 'Worker',
+  'app.game.tabs.workers': 'Workers',
   'app.game.tabs.houses': 'Houses',
   'app.game.tabs.fieldsOrOrchard': 'Fields & orchard',
   'app.game.tabs.productionOrExtraction': 'Production & extraction',

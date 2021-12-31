@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { appStore } from '~/src/app-config';
 import { MainLayout } from '~/src/app/main/components'
 import { I18nLoader } from '~/src/app/i18n';
-import { GameView } from '~/src/app/game';
+import { GameView, WorkersView } from '~/src/app/game';
 
 import { DatabaseRootComponent } from '~/src/app/databases/root'
 import { ItemsListView } from '~/src/app/databases/items';
@@ -31,7 +31,10 @@ const Application = () => (
             { key: 'menu.game.title', path: '/game' },
             { key: 'menu.database.title', path: '/databases' },
           ] }/> }>
-            <Route path="game" element={ <GameView rootPath="/game"/> }/>
+            <Route path="game" element={ <GameView rootPath="/game"/> }>
+              <Route path="workers" element={ <WorkersView /> }/>
+              <Route index element={ <Redirect to="/game/workers"/> }/>
+            </Route>
             <Route path="databases" element={ <DatabaseRootComponent rootPath="/databases"/> }>
               <Route path="buildings" element={ <BuildingsListView/> }/>
               <Route path="items" element={ <ItemsListView/> }/>

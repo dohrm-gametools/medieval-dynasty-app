@@ -6,7 +6,6 @@ import { Dispatch } from 'redux';
 import { useI18n } from '~/src/app/i18n';
 import { BuildingKind, GameDetails, TownBuilding } from '~/src/api';
 import { cleanup, list, selectors } from '../reducer';
-import { WorkerList } from '../components/workers';
 
 
 interface GameViewProps {
@@ -21,12 +20,11 @@ interface GameViewProps {
   extractions: Array<TownBuilding>;
   farming: Array<TownBuilding>;
   dispatch: Dispatch<any>;
-  location: string;
+  pathname: string;
   t: (key: string) => string;
 }
 
-class GameView extends React.Component<GameViewProps, { activeTab: string }> {
-  state = { activeTab: 'worker' };
+class GameView extends React.Component<GameViewProps, {}> {
   componentDidMount() {
     this.props.dispatch(list());
   }
@@ -35,8 +33,7 @@ class GameView extends React.Component<GameViewProps, { activeTab: string }> {
   }
 
   render() {
-    const { t, listLoaded, loading, game } = this.props;
-    const { activeTab } = this.state
+    const { t, listLoaded, loading, rootPath, pathname } = this.props;
     return (
       <>
         <Dimmer active={ !listLoaded || loading }>
@@ -44,12 +41,16 @@ class GameView extends React.Component<GameViewProps, { activeTab: string }> {
         </Dimmer>
         <Grid.Column width="3">
           <Menu vertical fluid tabular>
-            {/*<Menu.Item header>{ t('menu.game.title') }</Menu.Item>*/ }
-            <Menu.Item name={ t('app.game.tabs.worker') } active={ activeTab === 'worker' } onClick={ () => this.setState({ activeTab: 'worker' }) }/>
+            <Menu.Item
+              name={ t('app.game.tabs.workers') }
+              as={ Link }
+              active={ pathname === `${ rootPath }/workers` }
+              to={ `${ rootPath }/workers` }
+            />
           </Menu>
         </Grid.Column>
         <Grid.Column width="10">
-          { activeTab === 'worker' ? <WorkerList game={ game.id } workers={ game.workers }/> : null }
+          { listLoaded ? <Outlet/> : null }
         </Grid.Column>
         <Grid.Column width="3">
           TODO : Town bilan
@@ -80,7 +81,7 @@ function withAttributes(Component: React.ComponentType<GameViewProps>): React.Co
                       hunting={ buildingsByCategory[ BuildingKind.Hunting.valueOf() ] }
                       extractions={ buildingsByCategory[ BuildingKind.Extraction.valueOf() ] }
                       farming={ buildingsByCategory[ BuildingKind.Farming.valueOf() ] }
-                      location={ location.pathname }
+                      pathname={ location.pathname }
                       dispatch={ dispatch }
                       history={ history }/>
   }

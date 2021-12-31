@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Modal, SemanticWIDTHS, Table } from 'semantic-ui-react';
 import { useI18n } from '~/src/app/i18n';
 import { Worker, WorkerCreationId } from '~/src/api';
-import { saveWorker, deleteWorker } from '../reducer';
-import { default as WorkerForm } from './worker-form';
+import { saveWorker, deleteWorker, selectors } from '../reducer';
+import { default as WorkerForm } from '../components/worker-form';
 
 type ColumnType = { id: string, rowSpan?: SemanticWIDTHS, colSpan?: SemanticWIDTHS, width?: SemanticWIDTHS }
 const columns: Array<Array<ColumnType>> = [
@@ -39,8 +39,9 @@ function createDraft(): Worker {
   }
 }
 
-const WorkerList: React.ComponentType<{ workers: Array<Worker>; game: string }> = ({ workers, game }) => {
+const WorkersView: React.ComponentType = () => {
   const dispatch = useDispatch()
+  const game = useSelector(selectors.game);
   const [ selected, setSelected ] = React.useState<Worker | undefined>()
   const { t } = useI18n();
   const [ sort, setSort ] = React.useState<{ id: string, direction: 'ascending' | 'descending' } | undefined>(undefined);
@@ -67,7 +68,7 @@ const WorkerList: React.ComponentType<{ workers: Array<Worker>; game: string }> 
     }
   }
   const onSave = (worker: Worker) => {
-    dispatch(saveWorker({ game, worker }))
+    dispatch(saveWorker({ game: game.id, worker }))
     setSelected(undefined);
   }
   const onEdit = (worker: Worker) => {
@@ -75,7 +76,7 @@ const WorkerList: React.ComponentType<{ workers: Array<Worker>; game: string }> 
   }
   const onRemove = (worker: Worker) => {
     // TODO Add confirmation
-    dispatch(deleteWorker({ game, worker: worker.id }))
+    dispatch(deleteWorker({ game: game.id, worker: worker.id }))
   }
 
   return (
@@ -85,7 +86,7 @@ const WorkerList: React.ComponentType<{ workers: Array<Worker>; game: string }> 
           { columns.map((c, idx) => <Table.Row key={ `row-${ idx }` }>{ c.map(mapColumn) }</Table.Row>) }
         </Table.Header>
         <Table.Body>
-          { workers.map((worker) => {
+          { game.workers.map((worker) => {
             return (
               <Table.Row key={ worker.id }>
                 <Table.Cell>
@@ -120,4 +121,4 @@ const WorkerList: React.ComponentType<{ workers: Array<Worker>; game: string }> 
   );
 }
 
-export { WorkerList };
+export default WorkersView;
