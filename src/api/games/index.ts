@@ -1,4 +1,5 @@
-import { Building, Production } from '~/src/api';
+import { BuildingsById, Kind } from '../buildings';
+import { Productions, Production } from '../productions';
 import PouchDB from 'pouchdb';
 
 function uuidv4() {
@@ -10,12 +11,13 @@ function uuidv4() {
 
 
 export interface ProductionWithAssignment {
-  product: Production;
+  productionId: string;
   percentage: number;
 }
 
 export interface TownBuilding {
-  building: Building;
+  id: string;
+  buildingId: string;
   assignedWorker: Array<string>;
   productions: Array<ProductionWithAssignment>;
 }
@@ -44,6 +46,7 @@ export interface GameDetails {
 }
 
 export const WorkerCreationId = 'MyAwesomeUserIsPendingForCreation ...';
+export const BuildingCreationId = 'MyAwesomeBuildingIsPendingForCreation ...';
 
 export const GameDetailsDraft: GameDetails = {
   id: '',
@@ -113,12 +116,65 @@ export module GameApi {
       if (idx >= 0) {
         data.workers.splice(idx, 1);
       }
+      // Remove worker from building.
+      data.buildings.forEach(b => {
+        const idx = b.assignedWorker.findIndex(c => c === workerId);
+        if (idx >= 0) {
+          b.assignedWorker.splice(idx, 1);
+        }
+      });
       return db.put(data).then(c => one(id));
     });
   }
 
-  //
-  // export function addBuilding(gameId: string, buildingId: string): Promise<Game> {
-  //
-  // }
+  export function createOrUpdateBuilding(id: string, building: TownBuilding): Promise<GameDetails> {
+    return db.get<GameDetails>(id).then(data => {
+      const rawBuilding = BuildingsById[ building.buildingId ];
+      const allProductionsForBuilding = Productions.filter(p => p.producedIn.indexOf(building.buildingId) !== -1);
+      // Cleanup workers in function of building capacity.
+      if (rawBuilding.category === Kind.House) {
+        if (building.assignedWorker.length > (rawBuilding.capacity || 0)) {
+          building.assignedWorker = building.assignedWorker.slice(0, rawBuilding.capacity || 0);
+        }
+      } else {
+        if (building.assignedWorker.length > (rawBuilding.worker || 0)) {
+          building.assignedWorker = building.assignedWorker.slice(0, rawBuilding.worker || 0)
+        }
+      }
+      // Cleanup other buildings
+      building.assignedWorker.forEach(worker => {
+        data.buildings.filter(b =>
+          (rawBuilding.category === Kind.House ? BuildingsById[ b.buildingId ]?.category === Kind.House : BuildingsById[ b.buildingId ]?.category !== Kind.House)
+        ).forEach(b => {
+          b.assignedWorker = b.assignedWorker.filter(c => c !== worker);
+        });
+      });
+      // Verify production objects.
+      building.productions = building.productions.filter(prod => allProductionsForBuilding.findIndex(p => p.itemId === prod.productionId) > -1);
+      // TODO Verify production rate
+
+      if (building.id === BuildingCreationId) {
+        data.buildings.push({ ...building, id: uuidv4() });
+      } else {
+        const idx = data.buildings.findIndex(b => b.id === building.id);
+        if (idx < 0) {
+          data.buildings.push(building);
+        } else {
+          data.buildings[ idx ] = building;
+        }
+      }
+      return db.put(data).then(c => one(id));
+    });
+  }
+
+  export function deleteBuilding(id: string, buildingId: string): Promise<GameDetails> {
+    return db.get<GameDetails>(id).then((data) => {
+      const idx = data.buildings.findIndex(w => w.id === buildingId);
+      if (idx >= 0) {
+        data.buildings.splice(idx, 1);
+      }
+      return db.put(data).then(c => one(id));
+    });
+  }
+
 }

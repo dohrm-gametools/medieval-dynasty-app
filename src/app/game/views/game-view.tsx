@@ -47,6 +47,12 @@ class GameView extends React.Component<GameViewProps, {}> {
               active={ pathname === `${ rootPath }/workers` }
               to={ `${ rootPath }/workers` }
             />
+            <Menu.Item
+              name={ t('app.game.tabs.buildings') }
+              as={ Link }
+              active={ pathname === `${ rootPath }/buildings` }
+              to={ `${ rootPath }/buildings` }
+            />
           </Menu>
         </Grid.Column>
         <Grid.Column width="10">

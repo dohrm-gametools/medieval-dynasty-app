@@ -96,7 +96,7 @@
   {"itemId":"stone-sickle", "buildingIds": "smithy-i,smithy-ii,smithy-iii", "stack": 1,"producedPerDay": 1.3, "durabilityCost": "hammer:2", "costs": ["stone:4","stick:4"]},
   {"itemId":"fishing-spear", "buildingIds": "smithy-i,smithy-ii,smithy-iii", "stack": 1,"producedPerDay": 1.1, "costs": ["stone:1","linen-thread:1","log:1"]},
   {"itemId":"bucket", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": 1.7, "costs": ["plank:2"]},
-  {"itemId":"wooden-vial", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 10,"producedPerDay": 2.5, "costs": ["plan:1"]},
+  {"itemId":"wooden-vial", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 10,"producedPerDay": 2.5, "costs": ["plank:1"]},
   {"itemId":"wooden-bowl", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 5,"producedPerDay": 1.5, "costs": ["log:1"]},
   {"itemId":"wooden-plate", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 5,"producedPerDay": 1.44, "costs": ["log:1"]},
   {"itemId":"simple-bag", "buildingIds": "sewing-hut-i,sewing-hut-ii,sewing-hut-iii", "stack": 1,"producedPerDay": 1.4, "costs": ["leather:3"]}

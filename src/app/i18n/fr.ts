@@ -17,14 +17,14 @@ const fr: { [ key: string ]: string } = {
   'app.database.buildings.table.headers.storage': 'Capacité de stockage',
   'app.database.buildings.table.headers.worker': 'Nombre de travailleurs',
   // Buildings
-  'app.buildings.category.House': 'Habitation',
-  'app.buildings.category.Extraction': 'Extraction',
-  'app.buildings.category.Hunting': 'Chasse',
-  'app.buildings.category.Farming': 'Ferme',
-  'app.buildings.category.AnimalHusbandry': 'Elevage',
-  'app.buildings.category.Production': 'Production',
-  'app.buildings.category.Service': 'Service',
-  'app.buildings.category.Storage': 'Stockage',
+  'app.buildings.category.house': 'Habitation',
+  'app.buildings.category.extraction': 'Extraction',
+  'app.buildings.category.hunting': 'Chasse',
+  'app.buildings.category.farming': 'Ferme',
+  'app.buildings.category.animal-husbandry': 'Elevage',
+  'app.buildings.category.production': 'Production',
+  'app.buildings.category.service': 'Service',
+  'app.buildings.category.storage': 'Stockage',
   // Items database
   'app.database.items.table.headers.category': 'Categorie',
   'app.database.items.table.headers.name': 'Nom',
@@ -47,7 +47,6 @@ const fr: { [ key: string ]: string } = {
   'app.game.tabs.fieldsOrOrchard': 'Champs & verger',
   'app.game.tabs.productionOrExtraction': 'Production & extraction',
   'app.game.tabs.storages': 'Stockages',
-
   'app.game.worker.name': 'Nom',
   'app.game.worker.age': 'Age',
   'app.game.worker.sex': 'Genre',
@@ -59,6 +58,14 @@ const fr: { [ key: string ]: string } = {
   'app.game.worker.diplomacy': 'Diplomatie',
   'app.game.worker.survival': 'Survie',
   'app.game.worker.crafting': 'Artisanat',
+  'app.game.tabs.buildings': 'Bâtiments',
+  'app.game.building.name': 'Nom',
+  'app.game.building.workers': 'Travailleurs',
+  'app.game.building.productions': 'Productions',
+  'app.game.building.productionLevel': 'Niveau de production',
+  'app.game.building.productionRate': 'Taux de production',
+  'app.game.building.validation.percent.header': 'Erreur lors de la saisie des productions',
+  'app.game.building.validation.percent.content': 'Il n\'est pas possible d\'attribuer plus de 100% de force de travail',
 }
 
 export default fr;

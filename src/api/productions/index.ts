@@ -1,9 +1,12 @@
+import * as crypto from 'crypto';
+
 export interface ItemWithCount {
   id: string;
   count: number;
 }
 
 export interface Production {
+  id: string;
   itemId: string;
   producedIn: Array<string>;
   stack: number;
@@ -48,6 +51,7 @@ const data = (require('./data.json') as Array<ProductionRaw>).reduce<Array<Produ
   const costs = c.costs.reduce(reduceItems, []);
   const otherProducedItems = c.otherProducedItems && toArray(c.otherProducedItems).reduce(reduceItems, []) || [];
   return [ ...acc, {
+    id: crypto.createHash('sha1').update(JSON.stringify(c)).digest('hex'),
     itemId: c.itemId,
     producedIn: toArray(c.buildingIds),
     stack: c.stack,

@@ -29,6 +29,10 @@ export module ItemsApi {
     return Promise.resolve(items.Items);
   }
 
+  export function fetchTools(): Promise<Array<items.Item>> {
+    return Promise.resolve(items.Tools);
+  }
+
   export function fetchClothes(): Promise<Array<items.Item>> {
     return Promise.resolve(items.Clothes);
   }

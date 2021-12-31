@@ -17,14 +17,14 @@ const en = {
   'app.database.buildings.table.headers.storage': 'Storage capacity',
   'app.database.buildings.table.headers.worker': 'Worker number',
   // Buildings
-  'app.buildings.category.House': 'House',
-  'app.buildings.category.Extraction': 'Extraction',
-  'app.buildings.category.Hunting': 'Hunting',
-  'app.buildings.category.Farming': 'Farming',
-  'app.buildings.category.AnimalHusbandry': 'Animal husbandry',
-  'app.buildings.category.Production': 'Production',
-  'app.buildings.category.Service': 'Service',
-  'app.buildings.category.Storage': 'Storage',
+  'app.buildings.category.house': 'House',
+  'app.buildings.category.extraction': 'Extraction',
+  'app.buildings.category.hunting': 'Hunting',
+  'app.buildings.category.farming': 'Farming',
+  'app.buildings.category.animal-husbandry': 'Animal husbandry',
+  'app.buildings.category.production': 'Production',
+  'app.buildings.category.service': 'Service',
+  'app.buildings.category.storage': 'Storage',
   // Items database
   'app.database.items.table.headers.category': 'Category',
   'app.database.items.table.headers.name': 'Name',
@@ -58,6 +58,14 @@ const en = {
   'app.game.worker.diplomacy': 'Diplomacy',
   'app.game.worker.survival': 'Survival',
   'app.game.worker.crafting': 'Crafting',
+  'app.game.tabs.buildings': 'Buildings',
+  'app.game.building.name': 'Name',
+  'app.game.building.workers': 'Workers',
+  'app.game.building.productions': 'Productions',
+  'app.game.building.productionLevel': 'Production level',
+  'app.game.building.productionRate': 'Production rate',
+  'app.game.building.validation.percent.header': 'Error when you set production rate',
+  'app.game.building.validation.percent.content': 'It is not possible to allocate more than 100% of works',
 }
 
 export default en;
