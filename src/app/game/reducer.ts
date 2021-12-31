@@ -1,9 +1,17 @@
-import { ActionReducerMapBuilder, AsyncThunk, AsyncThunkAction, CaseReducer, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  ActionReducerMapBuilder,
+  AsyncThunk,
+  AsyncThunkAction,
+  CaseReducer,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+  createSelector
+} from '@reduxjs/toolkit';
 import { State as I18nState } from '~/src/app/i18n';
-import { GameApi, GameInList, GameDetails, Worker } from '~/src/api';
-import one = GameApi.one;
+import { GameApi, GameDetails, Worker, GameDetailsDraft, BuildingKind, TownBuilding } from '~/src/api';
 
-export const reduxKey = 'games';
+export const reduxKey = 'game';
 const list = createAsyncThunk(
   `${ reduxKey }/list`,
   () => GameApi.list(),
@@ -14,10 +22,6 @@ const select = createAsyncThunk(
   (id: string) => GameApi.one(id),
 )
 
-const create = createAsyncThunk(
-  `${ reduxKey }/create`,
-  (name: string) => GameApi.create(name),
-)
 //
 const saveWorker = createAsyncThunk(
   `${ reduxKey }/saveWorker`,
@@ -52,20 +56,20 @@ const deleteWorker = createAsyncThunk(
 export interface SliceState {
   listLoaded: boolean;
   loading: boolean;
-  games: Array<GameInList>;
-  gameSelected?: GameDetails;
+  game: GameDetails;
+  history: Array<GameDetails>;
   error?: string;
 }
 
 export interface State extends I18nState {
-  games: SliceState;
+  game: SliceState;
 }
 
 const initialState: SliceState = {
   listLoaded: false,
-  loading: true,
-  games: [],
-  gameSelected: undefined,
+  loading: false,
+  game: GameDetailsDraft,
+  history: [],
   error: undefined,
 };
 
@@ -91,9 +95,6 @@ const slice = createSlice({
   reducers: {
     cleanup(state) {
       state = initialState
-    },
-    unselect(state) {
-      state.gameSelected = undefined;
     }
   },
   extraReducers: builder => {
@@ -103,37 +104,54 @@ const slice = createSlice({
     })
     .addCase(list.fulfilled, (state, action) => {
       state.listLoaded = true;
-      state.games = action.payload;
+      const game = action.payload.find(d => !d.archived);
+      const history = action.payload.filter(d => d.archived);
+      if (!game) {
+        // Should not append ...
+        state.error = 'something wrong appends';
+        return;
+      }
+      state.game = game;
+      state.history = history;
     })
     b = addAsyncCases(b, select, (state, action) => {
       state.loading = false;
-      state.gameSelected = action.payload;
-    })
-    b = addAsyncCases(b, create, (state, action) => {
-      state.loading = false;
-      state.games = [ ...state.games, action.payload ];
-      state.gameSelected = action.payload;
+      state.game = action.payload;
     })
     b = addAsyncCases(b, saveWorker, (state, action) => {
       state.loading = false;
-      state.gameSelected = action.payload;
+      state.game = action.payload;
     });
     b = addAsyncCases(b, deleteWorker, (state, action) => {
       state.loading = false;
-      state.gameSelected = action.payload;
+      state.game = action.payload;
     });
   }
 });
 
 
-export const { unselect, cleanup } = slice.actions;
-export { list, select, create, saveWorker, deleteWorker }
-const gameSelected = (state: State) => state.games.gameSelected;
+export const { cleanup } = slice.actions;
+export { list, select, saveWorker, deleteWorker }
+const game = (state: State) => state.game.game;
 export const selectors = {
-  loading(state: State) { return state.games.loading },
-  listLoaded(state: State) { return state.games.listLoaded },
-  games(state: State) { return state.games.games },
-  gameSelected,
+  loading(state: State) { return state.game.loading },
+  listLoaded(state: State) { return state.game.listLoaded },
+  history(state: State) { return state.game.history },
+  game,
+  buildingsByCategory(state: State) {
+    return game(state).buildings.reduce((acc, c) => {
+      return { ...acc, [ c.building.category.valueOf() ]: [ ...acc[ c.building.category.valueOf() ], c ] }
+    }, {
+      [ BuildingKind.House.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.Extraction.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.Hunting.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.Farming.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.AnimalHusbandry.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.Production.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.Service.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.Storage.valueOf() ]: [] as Array<TownBuilding>,
+    })
+  }
 }
 
 export default slice.reducer;

@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 // App
 import { appStore } from '~/src/app-config';
 import { MainLayout } from '~/src/app/main/components'
-import { GamesRootView, GameView } from '~/src/app/games';
+import { GameView } from '~/src/app/game';
 
 import { DatabaseRootComponent } from '~/src/app/databases/root'
 import { ItemsListView } from '~/src/app/databases/items';
@@ -26,19 +26,17 @@ const Application = () => (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={ <MainLayout routes={ [
-          { key: 'menu.games.title', path: '/games' },
+          { key: 'menu.game.title', path: '/game' },
           { key: 'menu.database.title', path: '/databases' },
         ] }/> }>
-          <Route path="games" element={ <GamesRootView rootPath="/games"/> }>
-            <Route path=":id" element={ <GameView/> }/>
-          </Route>
+          <Route path="game" element={ <GameView rootPath="/game"/> }/>
           <Route path="databases" element={ <DatabaseRootComponent rootPath="/databases"/> }>
             <Route path="buildings" element={ <BuildingsListView/> }/>
             <Route path="items" element={ <ItemsListView/> }/>
             <Route path="productions" element={ <ProductionsListView/> }/>
             <Route index element={ <Redirect to="/databases/buildings"/> }/>
           </Route>
-          <Route index element={ <Redirect to="/games"/> }/>
+          <Route index element={ <Redirect to="/game"/> }/>
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,25 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { default as rawFr } from './fr';
-import { default as rawEn } from './en';
-
-
-function flatten(value: any): { [ key: string ]: string } {
-  const result: { [ key: string ]: string } = {};
-  const reduce = (v: any, path: string) => {
-    if (typeof v === 'string') {
-      result[ path ] = v;
-    } else {
-      Object.keys(v || {}).forEach(k => {
-        reduce(v[ k ], path === '' ? k : `${ path }.${ k }`);
-      });
-    }
-  }
-  reduce(value, '');
-  return result;
-}
-
-const fr = flatten(rawFr);
-const en = flatten(rawEn);
+import { default as fr } from './fr';
+import { default as en } from './en';
 
 const translations: { [ lang: string ]: { [ key: string ]: string } } = { fr, en };
 

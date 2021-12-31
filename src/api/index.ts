@@ -2,7 +2,7 @@ import * as items from './items';
 import * as buildings from './buildings';
 import * as productions from './productions';
 
-export { Building, Kind as BuildingKing } from './buildings';
+export { Building, Kind as BuildingKind } from './buildings';
 export { Item, Kind as ItemKind } from './items'
 export { Production } from './productions'
 export * from './games';

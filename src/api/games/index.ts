@@ -37,36 +37,58 @@ export interface Worker {
 
 export interface GameDetails {
   id: string;
-  name: string;
+  archived?: boolean;
+  version?: string;
   workers: Array<Worker>;
   buildings: Array<TownBuilding>;
 }
 
-export interface GameInList {
-  id: string;
-  name: string;
-}
-
 export const WorkerCreationId = 'MyAwesomeUserIsPendingForCreation ...';
+
+export const GameDetailsDraft: GameDetails = {
+  id: '',
+  workers: [],
+  buildings: [],
+}
 
 export module GameApi {
   const db = new PouchDB<GameDetails>('medieval-dynasty-planner');
 
-  export function list(): Promise<Array<GameInList>> {
-    return db.allDocs({ include_docs: true }).then(doc => doc.rows.reduce<Array<GameInList>>((acc, c) => {
-      if (c.doc) return [ ...acc, { id: c.doc.id, name: c.doc.name } ];
+  function fetchAll(): Promise<Array<GameDetails>> {
+    return db.allDocs({ include_docs: true }).then(doc => doc.rows.reduce<Array<GameDetails>>((acc, c) => {
+      if (c.doc) return [ ...acc, c.doc ];
       return acc;
-    }, []));
+    }, []))
+  }
+
+  export function list(): Promise<Array<GameDetails>> {
+    return fetchAll().then(items => {
+      const latest = items.find(game => !game.archived);
+      if (!latest) {
+        return create().then(item => [ item, ...items ]);
+      }
+      return Promise.resolve(items);
+    });
   }
 
   export function one(id: string): Promise<GameDetails> {
     return db.get<GameDetails>(id).then((data) => data);
   }
 
-  export function create(name: string): Promise<GameDetails> {
+  function create(): Promise<GameDetails> {
     const id = uuidv4();
-    const docToInsert = { _id: id, id, name, workers: [], buildings: [] };
+    const docToInsert = { _id: id, id, workers: [], buildings: [] };
     return db.put<Omit<GameDetails, 'id'>>(docToInsert).then(_ => docToInsert);
+  }
+
+  export function archive(): Promise<Array<GameDetails>> {
+    return fetchAll().then(items => {
+      const latest = items.find(game => !game.archived);
+      if (latest) {
+        return db.put({ ...latest, archived: true }).then(list);
+      }
+      return list();
+    });
   }
 
   export function createOrUpdateWorker(id: string, worker: Worker): Promise<GameDetails> {

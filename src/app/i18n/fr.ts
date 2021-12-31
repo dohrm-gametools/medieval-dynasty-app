@@ -5,7 +5,7 @@ const fr: { [ key: string ]: string } = {
   'cancel': 'Annuler',
   // Main menu
   'menu.database.title': 'Données',
-  'menu.games.title': 'Gestion des parties',
+  'menu.game.title': 'Gestion de partie',
   'menu.languages.title': 'Langue',
   // Buildings database
   'app.database.menu.items.title': 'Objects',
@@ -42,26 +42,23 @@ const fr: { [ key: string ]: string } = {
   'app.database.productions.table.headers.recipe': 'Ingredients',
   'app.database.productions.table.headers.producedIn': 'Produit dans',
   // Games
-  'app.games.menu.create-game-form.prompt': 'Nom de la partie ...',
-  'app.games.menu.create-game-form.button': 'Créer',
+  'app.game.tabs.worker': 'Travailleur',
+  'app.game.tabs.houses': 'Maisons',
+  'app.game.tabs.fieldsOrOrchard': 'Champs & verger',
+  'app.game.tabs.productionOrExtraction': 'Production & extraction',
+  'app.game.tabs.storages': 'Stockages',
 
-  'app.games.tabs.worker': 'Travailleur',
-  'app.games.tabs.houses': 'Maisons',
-  'app.games.tabs.fieldsOrOrchard': 'Champs & verger',
-  'app.games.tabs.productionOrExtraction': 'Production & extraction',
-  'app.games.tabs.storages': 'Stockages',
-
-  'app.games.worker.name': 'Nom',
-  'app.games.worker.age': 'Age',
-  'app.games.worker.sex': 'Genre',
-  'app.games.worker.sex.m': 'Homme',
-  'app.games.worker.sex.f': 'Femme',
-  'app.games.worker.extraction': 'Extraction',
-  'app.games.worker.hunting': 'Chasse',
-  'app.games.worker.farming': 'Agriculture',
-  'app.games.worker.diplomacy': 'Diplomatie',
-  'app.games.worker.survival': 'Survie',
-  'app.games.worker.crafting': 'Artisanat',
+  'app.game.worker.name': 'Nom',
+  'app.game.worker.age': 'Age',
+  'app.game.worker.sex': 'Genre',
+  'app.game.worker.sex.m': 'Homme',
+  'app.game.worker.sex.f': 'Femme',
+  'app.game.worker.extraction': 'Extraction',
+  'app.game.worker.hunting': 'Chasse',
+  'app.game.worker.farming': 'Agriculture',
+  'app.game.worker.diplomacy': 'Diplomatie',
+  'app.game.worker.survival': 'Survie',
+  'app.game.worker.crafting': 'Artisanat',
 }
 
 export default fr;
