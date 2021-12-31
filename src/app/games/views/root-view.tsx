@@ -51,7 +51,7 @@ class RootView extends React.Component<RootViewProps, { addGameOpened: boolean }
   render() {
     return (
       <>
-        <Dimmer active={ !this.props.listLoaded || this.props.loading }>
+        <Dimmer active={ !this.props.listLoaded }>
           <Loader content="Loading"/>
         </Dimmer>
         <Grid.Column width="3">
