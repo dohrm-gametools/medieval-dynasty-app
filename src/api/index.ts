@@ -5,6 +5,7 @@ import * as productions from './productions';
 export { Building, Kind as BuildingKing } from './buildings';
 export { Item, Kind as ItemKind } from './items'
 export { Production } from './productions'
+export * from './games';
 
 export module ItemsApi {
   // TODO Write real api maybe with parameters.

@@ -22,7 +22,7 @@ const BuildingsTable: React.ComponentType<Props> =
      sort,
      changeSort,
    }) => (
-    <Table id="items-table" celled striped compact inverted { ...tableProps } fixed sortable={ true }>
+    <Table id="items-table" celled striped compact { ...tableProps } fixed sortable={ true }>
       <Table.Header fullWidth>
         { headerGroups.map(headerGroup => (
           <Table.Row { ...headerGroup.getHeaderGroupProps() }>

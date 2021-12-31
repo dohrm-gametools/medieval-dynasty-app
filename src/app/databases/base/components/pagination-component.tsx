@@ -15,7 +15,6 @@ const BuildingsPagination: React.ComponentType<Props> = ({ total, page, pageSize
     <Grid centered doubling>
       <Grid.Row>
         <Pagination
-          inverted
           totalPages={ Math.floor(total / pageSize) + (total % pageSize === 0 ? 0 : 1) }
           activePage={ page + 1 }
           onPageChange={ (e, { activePage }) => {

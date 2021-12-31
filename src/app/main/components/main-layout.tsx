@@ -17,10 +17,10 @@ export const MainLayout: React.ComponentType<Props> = ({ routes }) => {
         <Menu.Item as={ Link } header to="/">Medieval Dynasty</Menu.Item>
         { routes.map(r => <Menu.Item key={ r.key } active={ pathname.indexOf(r.path) === 0 } as={ Link } header to={ r.path }>{ t(r.key) }</Menu.Item>) }
         <Menu.Menu position="right">
-          <Dropdown item text="Language">
+          <Dropdown item text={ t('menu.languages.title') }>
             <Dropdown.Menu>
-              <Dropdown.Item selected={ lang === 'fr' } onClick={ () => setSelectedLang('fr') }>FR</Dropdown.Item>
-              <Dropdown.Item selected={ lang === 'en' } onClick={ () => setSelectedLang('en') }>EN</Dropdown.Item>
+              <Dropdown.Item selected={ lang === 'fr' } onClick={ () => setSelectedLang('fr') }>{t('lang.fr')}</Dropdown.Item>
+              <Dropdown.Item selected={ lang === 'en' } onClick={ () => setSelectedLang('en') }>{t('lang.en')}</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </Menu.Menu>
