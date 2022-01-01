@@ -4,7 +4,7 @@
   "description": "Production planner for Medieval Dynasty",
   "scripts": {
     "prebuild": "run-s clean",
-    "build": "parcel build src/index.html --public-url ./",
+    "build": "parcel build src/index.html --public-url /",
     "postbuild": "cp dist/index.html dist/404.html && cp public/CNAME dist/CNAME",
     "clean": "rimraf ./dist",
     "start:app": "parcel src/index.html --open",
