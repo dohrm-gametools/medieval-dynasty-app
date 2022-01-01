@@ -6,23 +6,21 @@ import {
   BuildingsApi,
   GameApi,
   GameDetails,
-  GameDetailsDraft,
+  Item,
+  ItemsApi,
   Production,
   ProductionsApi,
-  ItemsApi,
   TownBuilding,
   Worker,
-  Item,
 } from '~/src/api';
 import { dailySummary } from './services/daily-summary';
-import { Kind } from '~/src/api/buildings';
 
 export const reduxKey = 'game';
 const list = createAsyncThunk(
   `${ reduxKey }/list`,
   () => {
     return Promise.all([
-        GameApi.list(),
+        GameApi.one(),
         BuildingsApi.fetchAll(),
         ProductionsApi.fetchAll(),
         ItemsApi.fetchTools(),
@@ -31,57 +29,31 @@ const list = createAsyncThunk(
   },
 );
 
-const select = createAsyncThunk(
-  `${ reduxKey }/select`,
-  (id: string) => GameApi.one(id),
-)
-
 //
 const saveWorker = createAsyncThunk(
   `${ reduxKey }/saveWorker`,
-  (payload: { game: string, worker: Worker }) => GameApi.createOrUpdateWorker(payload.game, payload.worker),
+  (payload: { worker: Worker }) => GameApi.createOrUpdateWorker(payload.worker),
 )
 
 const deleteWorker = createAsyncThunk(
   `${ reduxKey }/deleteWorker`,
-  (payload: { game: string, worker: string }) => GameApi.deleteWorker(payload.game, payload.worker),
+  (payload: { worker: string }) => GameApi.deleteWorker(payload.worker),
 )
 
 const saveBuilding = createAsyncThunk(
   `${ reduxKey }/saveBuilding`,
-  (payload: { game: string, building: TownBuilding }) => GameApi.createOrUpdateBuilding(payload.game, payload.building),
+  (payload: { building: TownBuilding }) => GameApi.createOrUpdateBuilding(payload.building),
 )
 
 const deleteBuilding = createAsyncThunk(
   `${ reduxKey }/deleteBuilding`,
-  (payload: { game: string, building: string }) => GameApi.deleteBuilding(payload.game, payload.building),
+  (payload: { building: string }) => GameApi.deleteBuilding(payload.building),
 )
-//
-// const updateWorker = createAsyncThunk(
-//   `${ reduxKey }/updateWorker`,
-//   (worker: Worker) => null,
-// )
-//
-// const addBuilding = createAsyncThunk(
-//   `${ reduxKey }/addBuilding`,
-//   (buildingId: string) => null
-// )
-//
-// const changeBuildingAssignment = createAsyncThunk(
-//   `${ reduxKey }/changeBuildingAssignment`,
-//   (payload: { building: string, worker: string, action: 'add' | 'remove' }) => null
-// )
-//
-// const changeProductionRate = createAsyncThunk(
-//   `${ reduxKey }/changeProductionRate`,
-//   (payload: { recipe: number, rate: number }) => null
-// )
 
 export interface SliceState {
   listLoaded: boolean;
   loading: boolean;
-  game: GameDetails;
-  history: Array<GameDetails>;
+  game: GameDetails,
   buildings: Array<Building>;
   productions: Array<Production>;
   tools: Array<Item>;
@@ -95,8 +67,10 @@ export interface State extends I18nState {
 const initialState: SliceState = {
   listLoaded: false,
   loading: false,
-  game: GameDetailsDraft,
-  history: [],
+  game: {
+    buildings: [],
+    workers: [],
+  },
   buildings: [],
   productions: [],
   tools: [],
@@ -133,10 +107,8 @@ const slice = createSlice({
         state.listLoaded = false;
       })
       .addCase(list.fulfilled, (state, action) => {
-        const [ games, buildings, products, tools ] = action.payload
+        const [ game, buildings, products, tools ] = action.payload
         state.listLoaded = true;
-        const game = games.find(d => !d.archived);
-        const history = games.filter(d => d.archived);
         if (!game) {
           // Should not append ...
           state.error = 'something wrong appends';
@@ -146,12 +118,7 @@ const slice = createSlice({
         state.productions = products;
         state.tools = tools;
         state.game = game;
-        state.history = history;
       })
-    b = addAsyncCases(b, select, (state, action) => {
-      state.loading = false;
-      state.game = action.payload;
-    })
     b = addAsyncCases(b, saveWorker, (state, action) => {
       state.loading = false;
       state.game = action.payload;
@@ -175,12 +142,11 @@ const slice = createSlice({
 export { getProductionLevel } from './services/get-production-level'
 
 export const { cleanup } = slice.actions;
-export { list, select, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
+export { list, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
 const game = (state: State) => state.game.game;
 export const selectors = {
   loading(state: State) { return state.game.loading },
   listLoaded(state: State) { return state.game.listLoaded },
-  history(state: State) { return state.game.history },
   game,
   productions(state: State) { return state.game.productions },
   tools(state: State) { return state.game.tools },
@@ -188,7 +154,7 @@ export const selectors = {
     return state.game.buildings.reduce<{ [ id: string ]: Building }>((acc, c) => ({ ...acc, [ c.id ]: c }), {});
   },
   buildingsByCategory(state: State) {
-    return game(state).buildings.reduce((acc, c) => {
+    return state.game.game.buildings.reduce((acc, c) => {
       const building = state.game.buildings.find(b => b.id === c.buildingId);
       if (building) {
         return { ...acc, [ building.category.valueOf() ]: [ ...acc[ building.category.valueOf() ], c ] };

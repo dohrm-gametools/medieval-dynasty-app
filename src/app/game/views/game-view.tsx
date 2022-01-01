@@ -4,7 +4,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useI18n } from '~/src/app/i18n';
-import { BuildingKind, GameDetails, TownBuilding } from '~/src/api';
+import { GameDetails } from '~/src/api';
 import { cleanup, list, selectors } from '../reducer';
 import { default as SummaryView } from '../components/summary-view';
 
@@ -14,12 +14,6 @@ interface GameViewProps {
   listLoaded: boolean;
   loading: boolean;
   game: GameDetails;
-  history: Array<GameDetails>;
-  houses: Array<TownBuilding>;
-  productions: Array<TownBuilding>;
-  hunting: Array<TownBuilding>;
-  extractions: Array<TownBuilding>;
-  farming: Array<TownBuilding>;
   dispatch: Dispatch<any>;
   pathname: string;
   t: (key: string) => string;
@@ -75,22 +69,14 @@ function withAttributes(Component: React.ComponentType<GameViewProps>): React.Co
     const listLoaded = useSelector(selectors.listLoaded);
     const loading = useSelector(selectors.loading);
     const game = useSelector(selectors.game);
-    const history = useSelector(selectors.history);
-    const buildingsByCategory = useSelector(selectors.buildingsByCategory);
 
     return <Component t={ t }
                       rootPath={ rootPath }
                       listLoaded={ listLoaded }
                       loading={ loading }
                       game={ game }
-                      houses={ buildingsByCategory[ BuildingKind.House.valueOf() ] }
-                      productions={ buildingsByCategory[ BuildingKind.Production.valueOf() ] }
-                      hunting={ buildingsByCategory[ BuildingKind.Hunting.valueOf() ] }
-                      extractions={ buildingsByCategory[ BuildingKind.Extraction.valueOf() ] }
-                      farming={ buildingsByCategory[ BuildingKind.Farming.valueOf() ] }
                       pathname={ location.pathname }
-                      dispatch={ dispatch }
-                      history={ history }/>
+                      dispatch={ dispatch }/>
   }
 }
 

@@ -66,6 +66,16 @@ const en = {
   'app.game.building.productionRate': 'Production rate',
   'app.game.building.validation.percent.header': 'Error when you set production rate',
   'app.game.building.validation.percent.content': 'It is not possible to allocate more than 100% of works',
+  // Summary
+  'app.game.summary.title': 'Summary',
+  'app.game.summary.tax.title': 'Tax (per season)',
+  'app.game.summary.food.title': 'Consumed food (per day)',
+  'app.game.summary.water.title': 'Consumed water (per day)',
+  'app.game.summary.wood.title': 'Consumed wood (per day)',
+  'app.game.summary.product.title': 'Items production',
+  'app.game.summary.product.table.headers.item': 'Item',
+  'app.game.summary.durability.title': 'Tools production',
+  'app.game.summary.durability.table.headers.tool': 'Tool',
 }
 
 export default en;

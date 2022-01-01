@@ -3,6 +3,15 @@ const fr: { [ key: string ]: string } = {
   'lang.fr': 'Français',
   'save': 'Sauvegarder',
   'cancel': 'Annuler',
+  'db.tools.axe': 'Hache',
+  'db.tools.fishingSpear': 'Harpon de pêche',
+  'db.tools.hammer': 'Marteau',
+  'db.tools.knife': 'Couteau',
+  'db.tools.shovel': 'Pelle',
+  'db.tools.sickle': 'Faucille',
+  'db.tools.scythe': 'Faux',
+  'db.tools.pickaxe': 'Pioche',
+  'db.tools.shearingScissors': 'Ciseaux de tonte',
   // Main menu
   'menu.database.title': 'Données',
   'menu.game.title': 'Gestion de partie',
@@ -66,6 +75,16 @@ const fr: { [ key: string ]: string } = {
   'app.game.building.productionRate': 'Taux de production',
   'app.game.building.validation.percent.header': 'Erreur lors de la saisie des productions',
   'app.game.building.validation.percent.content': 'Il n\'est pas possible d\'attribuer plus de 100% de force de travail',
+  // Summary
+  'app.game.summary.title': 'Résumé',
+  'app.game.summary.tax.title': 'Taxes (par saison)',
+  'app.game.summary.food.title': 'Nourriture consommée (par jour)',
+  'app.game.summary.water.title': 'Eau consommée (par jour)',
+  'app.game.summary.wood.title': 'Bois consommée (par jour)',
+  'app.game.summary.product.title': 'Production de biens',
+  'app.game.summary.product.table.headers.item': 'Objet',
+  'app.game.summary.durability.title': 'Production d\'outils',
+  'app.game.summary.durability.table.headers.tool': 'Outils',
 }
 
 export default fr;

@@ -51,13 +51,13 @@ const BuildingsSection: React.ComponentType<{
       setSelected(b);
     }
     const onRemove = (b: TownBuilding) => {
-      dispatch(deleteBuilding({ game: game.id, building: b.id }));
+      dispatch(deleteBuilding({ building: b.id }));
     }
     const onAdd = (buildingId: any) => {
       setSelected(createDraft(buildingId));
     }
     const onSave = (newBuilding: TownBuilding) => {
-      dispatch(saveBuilding({ game: game.id, building: newBuilding }));
+      dispatch(saveBuilding({ building: newBuilding }));
       setSelected(undefined);
     }
 

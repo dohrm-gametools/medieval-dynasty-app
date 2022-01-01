@@ -1,6 +1,5 @@
 import { BuildingsById, Kind } from '../buildings';
 import { Productions } from '../productions';
-import PouchDB from 'pouchdb';
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -38,9 +37,6 @@ export interface Worker {
 }
 
 export interface GameDetails {
-  id: string;
-  archived?: boolean;
-  version?: string;
   workers: Array<Worker>;
   buildings: Array<TownBuilding>;
 }
@@ -48,54 +44,33 @@ export interface GameDetails {
 export const WorkerCreationId = 'MyAwesomeUserIsPendingForCreation ...';
 export const BuildingCreationId = 'MyAwesomeBuildingIsPendingForCreation ...';
 
-export const GameDetailsDraft: GameDetails = {
-  id: '',
-  workers: [],
-  buildings: [],
-}
 
 export module GameApi {
-  const db = new PouchDB<GameDetails>('medieval-dynasty-planner');
-
-  function fetchAll(): Promise<Array<GameDetails>> {
-    return db.allDocs({ include_docs: true }).then(doc => doc.rows.reduce<Array<GameDetails>>((acc, c) => {
-      if (c.doc) return [ ...acc, c.doc ];
-      return acc;
-    }, []))
+  const key = 'medieval-dynasty-game';
+  function read(): Promise<GameDetails> {
+    let resStr = localStorage.getItem(key);
+    let res = resStr ? JSON.parse(resStr) : undefined;
+    if (!resStr) {
+      res = {
+        workers: [],
+        buildings: [],
+      };
+      localStorage.setItem(key, JSON.stringify(res));
+    }
+    return Promise.resolve(res);
   }
 
-  export function list(): Promise<Array<GameDetails>> {
-    return fetchAll().then(items => {
-      const latest = items.find(game => !game.archived);
-      if (!latest) {
-        return create().then(item => [ item, ...items ]);
-      }
-      return Promise.resolve(items);
-    });
+  function save(details: GameDetails): Promise<GameDetails> {
+    localStorage.setItem(key, JSON.stringify(details));
+    return Promise.resolve(details);
   }
 
-  export function one(id: string): Promise<GameDetails> {
-    return db.get<GameDetails>(id).then((data) => data);
+  export function one(): Promise<GameDetails> {
+    return read();
   }
 
-  function create(): Promise<GameDetails> {
-    const id = uuidv4();
-    const docToInsert = { _id: id, id, workers: [], buildings: [] };
-    return db.put<Omit<GameDetails, 'id'>>(docToInsert).then(_ => docToInsert);
-  }
-
-  export function archive(): Promise<Array<GameDetails>> {
-    return fetchAll().then(items => {
-      const latest = items.find(game => !game.archived);
-      if (latest) {
-        return db.put({ ...latest, archived: true }).then(list);
-      }
-      return list();
-    });
-  }
-
-  export function createOrUpdateWorker(id: string, worker: Worker): Promise<GameDetails> {
-    return db.get<GameDetails>(id).then((data) => {
+  export function createOrUpdateWorker(worker: Worker): Promise<GameDetails> {
+    return read().then((data) => {
       if (worker.id === WorkerCreationId) {
         data.workers.push({ ...worker, id: uuidv4() });
       } else {
@@ -106,12 +81,12 @@ export module GameApi {
           data.workers[ idx ] = worker;
         }
       }
-      return db.put(data).then(c => one(id));
+      return save(data);
     });
   }
 
-  export function deleteWorker(id: string, workerId: string): Promise<GameDetails> {
-    return db.get<GameDetails>(id).then((data) => {
+  export function deleteWorker(workerId: string): Promise<GameDetails> {
+    return read().then((data) => {
       const idx = data.workers.findIndex(w => w.id === workerId);
       if (idx >= 0) {
         data.workers.splice(idx, 1);
@@ -123,12 +98,12 @@ export module GameApi {
           b.assignedWorker.splice(idx, 1);
         }
       });
-      return db.put(data).then(c => one(id));
+      return save(data);
     });
   }
 
-  export function createOrUpdateBuilding(id: string, building: TownBuilding): Promise<GameDetails> {
-    return db.get<GameDetails>(id).then(data => {
+  export function createOrUpdateBuilding(building: TownBuilding): Promise<GameDetails> {
+    return read().then(data => {
       const rawBuilding = BuildingsById[ building.buildingId ];
       const allProductionsForBuilding = Productions.filter(p => p.producedIn.indexOf(building.buildingId) !== -1);
       // Cleanup workers in function of building capacity.
@@ -163,17 +138,17 @@ export module GameApi {
           data.buildings[ idx ] = building;
         }
       }
-      return db.put(data).then(c => one(id));
+      return save(data);
     });
   }
 
-  export function deleteBuilding(id: string, buildingId: string): Promise<GameDetails> {
-    return db.get<GameDetails>(id).then((data) => {
+  export function deleteBuilding(buildingId: string): Promise<GameDetails> {
+    return read().then((data) => {
       const idx = data.buildings.findIndex(w => w.id === buildingId);
       if (idx >= 0) {
         data.buildings.splice(idx, 1);
       }
-      return db.put(data).then(c => one(id));
+      return save(data);
     });
   }
 

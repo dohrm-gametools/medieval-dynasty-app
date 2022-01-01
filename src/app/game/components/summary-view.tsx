@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { selectors } from '~/src/app/game/reducer';
-import { Card, Grid, List, Table } from 'semantic-ui-react';
+import { Card, List, Table } from 'semantic-ui-react';
 import { useI18n } from '~/src/app/i18n';
 
 
