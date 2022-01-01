@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Button, Dimmer, Grid, Input, Loader, Menu } from 'semantic-ui-react';
+import { Dimmer, Grid, Loader, Menu } from 'semantic-ui-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useI18n } from '~/src/app/i18n';
 import { BuildingKind, GameDetails, TownBuilding } from '~/src/api';
 import { cleanup, list, selectors } from '../reducer';
+import { default as SummaryView } from '../components/summary-view';
 
 
 interface GameViewProps {
@@ -59,7 +60,7 @@ class GameView extends React.Component<GameViewProps, {}> {
           { listLoaded ? <Outlet/> : null }
         </Grid.Column>
         <Grid.Column width="3">
-          TODO : Town bilan
+          <SummaryView/>
         </Grid.Column>
       </>
     );

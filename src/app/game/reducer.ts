@@ -14,6 +14,7 @@ import {
   Worker,
   Item,
 } from '~/src/api';
+import { dailySummary } from './services/daily-summary';
 import { Kind } from '~/src/api/buildings';
 
 export const reduxKey = 'game';
@@ -171,15 +172,7 @@ const slice = createSlice({
 });
 
 
-export function getProductionLevel(building: Building, workers: Array<string>, game: GameDetails): number | undefined {
-  const skill = building.workerSkill;
-  if (!skill) return undefined;
-  return workers.reduce((acc, c) => {
-    const w = game.workers.find(w => w.id === c)
-    if (!w) return acc;
-    return acc + w.skills[ skill ];
-  }, 0);
-}
+export { getProductionLevel } from './services/get-production-level'
 
 export const { cleanup } = slice.actions;
 export { list, select, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
@@ -211,7 +204,8 @@ export const selectors = {
       [ BuildingKind.Service.valueOf() ]: [] as Array<TownBuilding>,
       [ BuildingKind.Storage.valueOf() ]: [] as Array<TownBuilding>,
     })
-  }
+  },
+  summary(state: State) { return dailySummary(state.game.game, state.game.buildings, state.game.productions, state.game.tools)}
 }
 
 export default slice.reducer;
