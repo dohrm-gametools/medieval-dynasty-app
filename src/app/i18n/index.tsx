@@ -37,3 +37,15 @@ export function useI18n() {
     setSelectedLang,
   };
 }
+
+export interface With18nProps {
+  t: (key: string) => string;
+  lang: string;
+}
+
+export function withI18n<Props = {}>(Component: React.ComponentType<Props & With18nProps>): React.ComponentType<Props> {
+  return (props: Props) => {
+    const { t, lang } = useI18n();
+    return <Component t={ t } lang={ lang } { ...props }/>
+  }
+}

@@ -122,10 +122,10 @@ const BuildingsSection: React.ComponentType<{
           </Table>
         </Accordion.Content>
         { selected ? <BuildingForm
-          building={ selected }
-          productions={ productions }
-          rawBuildings={ rawBuildings }
-          workers={ game.workers }
+          building={ { ...selected } }
+          productions={ productions.slice() }
+          rawBuildings={ { ...rawBuildings } }
+          workers={ game.workers.slice() }
           onSave={ onSave }
           cancel={ () => setSelected(undefined) }
         /> : null }

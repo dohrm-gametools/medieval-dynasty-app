@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Form, Grid, Header, Input, Message, Modal, Select } from 'semantic-ui-react';
 import { Building, Production, TownBuilding, Worker } from '~/src/api';
-import { useI18n } from '~/src/app/i18n';
+import { With18nProps, withI18n } from '~/src/app/i18n';
 import { Kind } from '~/src/api/buildings';
 
 type WorkerOption = { key: string, text: string, value: string, disabled?: boolean };
@@ -21,22 +21,6 @@ function filterWorkers(allWorkers: Array<Worker>, selected: Array<string>): Arra
   ];
 }
 
-function formReducer(state: State, action: { type: string, payload: any }): State {
-  if (action.type.indexOf('worker:') === 0) {
-    const idx = parseInt(action.type.substring('worker:'.length));
-    const assignedWorker = [ ...state.assignedWorker ];
-    assignedWorker[ idx ] = action.payload as string;
-    return { ...state, assignedWorker };
-  }
-  if (action.type.indexOf('prod:') === 0) {
-    const idx = parseInt(action.type.substring('prod:'.length));
-    const productions = [ ...state.productions ];
-    productions[ idx ] = { ...productions[ idx ], percentage: parseInt(action.payload) };
-    return { ...state, productions };
-  }
-  return state;
-}
-
 function prepareState(state: TownBuilding, building: Building, productions: Array<Production>): State {
   const maxLength = (building.category === Kind.House ? building.capacity : building.worker) || 0;
   const assignedWorker: Array<string> = [];
@@ -53,7 +37,7 @@ function prepareState(state: TownBuilding, building: Building, productions: Arra
         productionId: p.id,
         percentage: state.productions.find(sp => sp.productionId === p.id)?.percentage || 0,
       };
-    }),
+    }).slice(),
   };
 }
 
@@ -68,42 +52,79 @@ function splitArray<T>(items: Array<T>, breakpoint: number): Array<Array<{ data:
   return result;
 }
 
-const BuildingForm: React.ComponentType<{
+function computeProductionRate(building: TownBuilding): number {
+  return building.productions.reduce((acc, c) => acc + c.percentage, 0);
+}
+
+interface CmpState {
+  data: TownBuilding;
+  availableWorkers: Array<WorkerOption>;
+  productionRate: number;
+  baseBuilding: Building;
+  productionsById: { [ key: string ]: Production };
+}
+
+class BuildingForm extends React.Component<{
   building: TownBuilding,
   productions: Array<Production>,
   rawBuildings: { [ key: string ]: Building },
   workers: Array<Worker>,
   onSave: (updated: TownBuilding) => void,
-  cancel: () => void
-}> =
-  ({
-     building,
-     productions,
-     rawBuildings,
-     workers,
-     cancel,
-     onSave
-   }) => {
-    const { t } = useI18n();
-    const baseBuilding = rawBuildings[ building.buildingId ];
-    const productionById = productions.reduce<{ [ key: string ]: Production }>((acc, c) => ({ ...acc, [ c.id ]: c }), {});
-    const [ state, dispatch ] = React.useReducer(formReducer, prepareState(building, baseBuilding, productions));
-    const productionRate = state.productions.reduce((acc, c) => acc + c.percentage, 0);
-    const availableWorkers = filterWorkers(workers, state.assignedWorker);
-    const onChange = (e: any, { name, value }: { name: string, value: any }) => dispatch({ type: name, payload: value });
-    const save = () => {
-      if (productionRate <= 100) {
-        const result = {
-          ...state,
-          productions: state.productions.filter(s => s.percentage > 0),
-          assignedWorker: state.assignedWorker.filter(s => s !== EmptyWorker),
-        };
-        onSave(result);
-      }
-    };
+  cancel: () => void,
+} & With18nProps, CmpState> {
+
+  componentDidMount() {
+    // Initialize state
+    this.setState({
+      data: prepareState(this.props.building, this.props.rawBuildings[ this.props.building.buildingId ], this.props.productions),
+      availableWorkers: filterWorkers(this.props.workers, this.props.building.assignedWorker),
+      productionRate: computeProductionRate(this.props.building),
+      baseBuilding: this.props.rawBuildings[ this.props.building.buildingId ],
+      productionsById: this.props.productions.reduce((acc, c) => ({ ...acc, [ c.id ]: c }), {})
+    });
+  }
+
+  onChange = (e: any, { name, value }: { name: string, value: any }) => {
+    let newData: TownBuilding | undefined;
+    if (name.indexOf('worker:') === 0) {
+      const idx = parseInt(name.substring('worker:'.length));
+      const assignedWorker = [ ...this.state.data.assignedWorker ];
+      assignedWorker[ idx ] = value as string;
+      newData = { ...this.state.data, assignedWorker };
+    }
+    if (name.indexOf('prod:') === 0) {
+      const idx = parseInt(name.substring('prod:'.length));
+      const productions = [ ...this.state.data.productions ];
+      productions[ idx ] = { ...productions[ idx ], percentage: parseInt(value) };
+      newData = { ...this.state.data, productions };
+    }
+    if (!!newData) {
+      this.setState({
+        data: newData,
+        availableWorkers: filterWorkers(this.props.workers, newData.assignedWorker),
+        productionRate: computeProductionRate(newData),
+      })
+    }
+  };
+
+  save = (data: TownBuilding, productionRate: number) => {
+    if (productionRate <= 100) {
+      this.props.onSave({
+        ...data,
+        assignedWorker: data.assignedWorker.filter(w => w !== EmptyWorker),
+        productions: data.productions.filter(p => p.percentage > 0),
+      })
+    }
+  };
+  cancel = () => this.props.cancel();
+
+  render() {
+    if (!this.state) return null;
+    const { t } = this.props;
+    const { data: state, availableWorkers, productionRate, baseBuilding, productionsById } = this.state;
     return (
       <Modal open
-             onClose={ cancel }
+             onClose={ this.cancel }
              closeOnEscape={ false }
              closeOnDimmerClick={ false }>
         <Modal.Header>{ t('app.game.tabs.buildings') } ({ t(`db.buildings.${ baseBuilding.id }`) })</Modal.Header>
@@ -118,7 +139,7 @@ const BuildingForm: React.ComponentType<{
                               value={ d.data }
                               options={ availableWorkers }
                               name={ `worker:${ d.originalIdx }` }
-                              onChange={ onChange }
+                              onChange={ this.onChange }
                               width="4"
                   />
                 )) }
@@ -130,7 +151,7 @@ const BuildingForm: React.ComponentType<{
               splitArray(state.productions, 2).map((a, idx) => (
                 <Form.Group key={ `group-prod-${ idx }` } inline>
                   { a.map(d => {
-                    const prod = productionById[ d.data.productionId ];
+                    const prod = productionsById[ d.data.productionId ];
                     const recipe = prod.costs.map(c => `${ t(`db.items.${ c.id }`) } x ${ c.count }`).join(', ');
                     return (
                       <Form.Field
@@ -148,7 +169,7 @@ const BuildingForm: React.ComponentType<{
                         max={ 100 }
                         value={ d.data.percentage }
                         name={ `prod:${ d.originalIdx }` }
-                        onChange={ onChange }
+                        onChange={ this.onChange }
                         width="8"
                       />
                     )
@@ -164,11 +185,12 @@ const BuildingForm: React.ComponentType<{
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button onClick={ () => cancel() }>{ t('cancel') }</Button>
-          <Button onClick={ save }>{ t('save') }</Button>
+          <Button onClick={ this.cancel }>{ t('cancel') }</Button>
+          <Button type="submit" onClick={ () => this.save(state, productionRate) }>{ t('save') }</Button>
         </Modal.Actions>
       </Modal>
     );
-  };
+  }
+}
 
-export default BuildingForm;
+export default withI18n(BuildingForm);

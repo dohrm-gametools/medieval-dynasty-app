@@ -1,5 +1,5 @@
 import { BuildingsById, Kind } from '../buildings';
-import { Productions, Production } from '../productions';
+import { Productions } from '../productions';
 import PouchDB from 'pouchdb';
 
 function uuidv4() {
@@ -150,7 +150,7 @@ export module GameApi {
         });
       });
       // Verify production objects.
-      building.productions = building.productions.filter(prod => allProductionsForBuilding.findIndex(p => p.itemId === prod.productionId) > -1);
+      building.productions = building.productions.filter(prod => allProductionsForBuilding.findIndex(p => p.id === prod.productionId) > -1);
       // TODO Verify production rate
 
       if (building.id === BuildingCreationId) {
