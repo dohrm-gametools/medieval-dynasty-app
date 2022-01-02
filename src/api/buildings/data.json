@@ -18,7 +18,7 @@
   {"id": "herbalist's-hut-ii", "tax":20  ,"category":"extraction", "i18n": { "en": "Herbalist's Hut II", "fr": "Atelier de l'herboriste II"}, "storage": 100, "worker": 2, "workerSkill": "survival"},
   {"id": "hunting-lodge-i", "tax":15  ,"category":"hunting", "i18n": { "en": "Hunting Lodge I", "fr": "Pavillon de chasse I"}, "storage": 50, "worker": 2, "workerSkill": "hunting"},
   {"id": "hunting-lodge-ii", "tax":20  ,"category":"hunting", "i18n": { "en": "Hunting Lodge II", "fr": "Pavillon de chasse II"}, "storage": 50, "worker": 3, "workerSkill": "hunting"},
-  {"id": "fishing-hut-i", "tax":10  ,"category":"hunting", "i18n": { "en": "Fishing Hut I", "fr": "Cabane de pêche II"}, "storage": 50, "worker": 1, "workerSkill": "hunting"},
+  {"id": "fishing-hut-i", "tax":10  ,"category":"hunting", "i18n": { "en": "Fishing Hut I", "fr": "Cabane de pêche I"}, "storage": 50, "worker": 1, "workerSkill": "hunting"},
   {"id": "fishing-hut-ii", "tax":15  ,"category":"hunting", "i18n": { "en": "Fishing Hut II", "fr": "Cabane de pêche II"}, "storage": 50, "worker": 2, "workerSkill": "hunting"},
   {"id": "barn-i", "tax":30  ,"category":"farming", "i18n": { "en": "Barn I", "fr": "Grange I"}, "storage": 50, "worker": 4, "workerSkill": "farming"},
   {"id": "barn-ii", "tax":40  ,"category":"farming", "i18n": { "en": "Barn II", "fr": "Grange II"}, "storage": 50, "worker": 5, "workerSkill": "farming"},
