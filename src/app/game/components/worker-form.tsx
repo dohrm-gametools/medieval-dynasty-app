@@ -63,10 +63,10 @@ const WorkerForm: React.ComponentType<{ worker: Worker, onSave: (updated: Worker
               />
               <Form.Input
                 type="number"
-                label={ t('app.game.worker.crafting') }
-                value={ state.skills.crafting }
+                label={ t('app.game.worker.hunting') }
+                value={ state.skills.hunting }
                 min={ 1 }
-                onChange={ (e, { value }) => dispatch({ type: 'skills.crafting', payload: parseInt(value) }) }
+                onChange={ (e, { value }) => dispatch({ type: 'skills.hunting', payload: parseInt(value) }) }
               />
               <Form.Input
                 type="number"
@@ -77,13 +77,6 @@ const WorkerForm: React.ComponentType<{ worker: Worker, onSave: (updated: Worker
               />
             </Form.Group>
             <Form.Group>
-              <Form.Input
-                type="number"
-                label={ t('app.game.worker.hunting') }
-                value={ state.skills.hunting }
-                min={ 1 }
-                onChange={ (e, { value }) => dispatch({ type: 'skills.hunting', payload: parseInt(value) }) }
-              />
               <Form.Input
                 type="number"
                 label={ t('app.game.worker.diplomacy') }
@@ -97,6 +90,13 @@ const WorkerForm: React.ComponentType<{ worker: Worker, onSave: (updated: Worker
                 value={ state.skills.survival }
                 min={ 1 }
                 onChange={ (e, { value }) => dispatch({ type: 'skills.survival', payload: parseInt(value) }) }
+              />
+              <Form.Input
+                type="number"
+                label={ t('app.game.worker.crafting') }
+                value={ state.skills.crafting }
+                min={ 1 }
+                onChange={ (e, { value }) => dispatch({ type: 'skills.crafting', payload: parseInt(value) }) }
               />
             </Form.Group>
           </Form>

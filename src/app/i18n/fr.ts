@@ -66,7 +66,7 @@ const fr: { [ key: string ]: string } = {
   'app.game.worker.farming': 'Agriculture',
   'app.game.worker.diplomacy': 'Diplomatie',
   'app.game.worker.survival': 'Survie',
-  'app.game.worker.crafting': 'Artisanat',
+  'app.game.worker.crafting': 'Production',
   'app.game.tabs.buildings': 'Bâtiments',
   'app.game.building.name': 'Nom',
   'app.game.building.workers': 'Travailleurs',
