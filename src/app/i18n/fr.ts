@@ -83,7 +83,7 @@ const fr: { [ key: string ]: string } = {
   'app.game.summary.wood.title': 'Bois (journalier)',
   'app.game.summary.product.title': 'Production de biens',
   'app.game.summary.product.table.headers.item': 'Objet',
-  'app.game.summary.durability.title': 'Production d\'outils',
+  'app.game.summary.durability.title': 'Durabilité',
   'app.game.summary.durability.table.headers.tool': 'Outils',
 }
 

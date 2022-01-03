@@ -74,7 +74,7 @@ const en = {
   'app.game.summary.wood.title': 'Wood (daily)',
   'app.game.summary.product.title': 'Items production',
   'app.game.summary.product.table.headers.item': 'Item',
-  'app.game.summary.durability.title': 'Tools production',
+  'app.game.summary.durability.title': 'Durability',
   'app.game.summary.durability.table.headers.tool': 'Tool',
 }
 
