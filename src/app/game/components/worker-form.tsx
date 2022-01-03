@@ -25,7 +25,7 @@ const WorkerForm: React.ComponentType<{ worker: Worker, onSave: (updated: Worker
              onClose={ cancel }
              closeOnEscape={ false }
              closeOnDimmerClick={ false }>
-        <Modal.Header>{ t('app.game.tabs.worker') }</Modal.Header>
+        <Modal.Header>{ t('app.game.tabs.workers') }</Modal.Header>
         <Modal.Content>
           <Form onSubmit={ () => onSave(state) }>
             <Form.Group>

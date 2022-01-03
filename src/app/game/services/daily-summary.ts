@@ -1,16 +1,39 @@
 import { Building, GameDetails, Item, Production } from '~/src/api';
 import { getProductionLevel } from './get-production-level';
 
+export type SummaryRow = { produced: number, consumed: number, balance: number };
+export type SummaryRowWithId = SummaryRow & { id: string };
+
 export interface DailySummary {
   totalTax: number;
-  toolsDuration: Array<{ toolId: string, produced: number, consumed: number, balance: number }>;
-  productions: Array<{ itemId: string, produced: number, consumed: number, balance: number }>;
+  others: {
+    wood: SummaryRow,
+    water: SummaryRow,
+    food: SummaryRow,
+  };
+  toolsDuration: Array<SummaryRowWithId>;
+  productions: Array<SummaryRowWithId>;
+}
+
+interface AggregatorRow {
+  produced: number;
+  consumed: number;
 }
 
 interface Aggregator {
   tax: number;
-  tools: { [ key: string ]: { produced: number, consumed: number } };
-  items: { [ key: string ]: { produced: number, consumed: number } };
+  tools: { [ key: string ]: AggregatorRow };
+  items: { [ key: string ]: AggregatorRow };
+}
+
+function computeSummaryRow(row: AggregatorRow, id: string): SummaryRowWithId;
+function computeSummaryRow(row: AggregatorRow, id: string): SummaryRowWithId {
+  return {
+    id,
+    produced: rounded(row.produced),
+    consumed: rounded(row.consumed),
+    balance: rounded(row.produced - row.consumed),
+  }
 }
 
 function appendAggregate(key: string, field: 'produced' | 'consumed', value: number, aggregator: { [ key: string ]: { produced: number, consumed: number } }) {
@@ -20,13 +43,19 @@ function appendAggregate(key: string, field: 'produced' | 'consumed', value: num
   aggregator[ key ][ field ] += value;
 }
 
+function rounded(value: number): number { return Math.round(value * 100) / 100; }
+
 export function dailySummary(
   game: GameDetails,
   rawBuildings: Array<Building>,
   rawProductions: Array<Production>,
-  rawTools: Array<Item>
+  rawItems: Array<Item>
 ): DailySummary {
-  const aggregator: Aggregator = { tax: 0, tools: {}, items: {} };
+  const aggregator: Aggregator = {
+    tax: 0,
+    tools: {},
+    items: {},
+  };
 
   game.buildings.forEach(building => {
     const buildingBase = rawBuildings.find(c => c.id === building.buildingId);
@@ -36,13 +65,12 @@ export function dailySummary(
     building.productions.forEach(production => {
       const productionBase = rawProductions.find(p => p.id === production.productionId);
       if (!productionBase) return;
-      const maybeTool = rawTools.find(t => t.id === productionBase.itemId);
-      const dailyProduced = productionBase.producedPerDay * (production.percentage / 100) * productionLevel; // TODO Add character peak, season modifier
-      if (maybeTool && maybeTool.tool) {
-        appendAggregate(maybeTool.tool, 'produced', dailyProduced * productionBase.stack * (maybeTool.duration || 0), aggregator.tools);
-      } else {
-        appendAggregate(productionBase.itemId, 'produced', dailyProduced * productionBase.stack, aggregator.items);
+      const maybeItem = rawItems.find(t => t.id === productionBase.itemId);
+      const dailyProduced = productionBase.producedPerDay * (production.percentage / 100) * productionLevel; // TODO Add character peak, season modifier,...
+      if (maybeItem && maybeItem.tool) {
+        appendAggregate(maybeItem.tool, 'produced', dailyProduced * productionBase.stack * (maybeItem.durability || 0), aggregator.tools);
       }
+      appendAggregate(productionBase.itemId, 'produced', dailyProduced * productionBase.stack, aggregator.items);
       productionBase.otherProducedItems.forEach(other => {
         appendAggregate(other.id, 'produced', dailyProduced * other.count, aggregator.items);
       });
@@ -55,19 +83,37 @@ export function dailySummary(
     });
   });
 
-  return {
+  const result: DailySummary = {
     totalTax: aggregator.tax,
-    toolsDuration: Object.keys(aggregator.tools).reduce<Array<{ toolId: string, produced: number, consumed: number, balance: number }>>((acc, c) => [ ...acc, {
-      toolId: c,
-      produced: aggregator.tools[ c ].produced,
-      consumed: aggregator.tools[ c ].consumed,
-      balance: aggregator.tools[ c ].produced - aggregator.tools[ c ].consumed,
-    } ], []),
-    productions: Object.keys(aggregator.items).reduce<Array<{ itemId: string, produced: number, consumed: number, balance: number }>>((acc, c) => [ ...acc, {
-      itemId: c,
-      produced: aggregator.items[ c ].produced,
-      consumed: aggregator.items[ c ].consumed,
-      balance: aggregator.items[ c ].produced - aggregator.items[ c ].consumed,
-    } ], [])
-  }
+    others: {
+      wood: { produced: 0, consumed: game.workers.length * 30, balance: 0 }, // TODO Wood depends of the season and the kind of the house
+      food: { produced: 0, consumed: game.workers.length * 30, balance: 0 },
+      water: { produced: 0, consumed: game.workers.length * 30, balance: 0 },
+    },
+    toolsDuration: Object.keys(aggregator.tools).reduce<Array<SummaryRowWithId>>((acc, c) => [
+      ...acc,
+      computeSummaryRow(aggregator.tools[ c ], c)
+    ], []),
+    productions: Object.keys(aggregator.items).reduce<Array<SummaryRowWithId>>((acc, c) => [
+      ...acc,
+      computeSummaryRow(aggregator.items[ c ], c)
+    ], [])
+  };
+  result.productions.forEach(item => {
+    const maybeItem = rawItems.find(t => t.id === item.id);
+    if (maybeItem && maybeItem.wood) {
+      result.others.wood.produced += rounded(maybeItem.wood * item.balance);
+    }
+    if (maybeItem && maybeItem.water) {
+      result.others.water.produced += rounded(maybeItem.water * item.balance);
+    }
+    if (maybeItem && maybeItem.food) {
+      result.others.food.produced += rounded(maybeItem.food * item.balance);
+    }
+  });
+  result.others.wood.balance = rounded(result.others.wood.produced - result.others.wood.consumed);
+  result.others.food.balance = rounded(result.others.food.produced - result.others.food.consumed);
+  result.others.water.balance = rounded(result.others.water.produced - result.others.water.consumed);
+
+  return result
 }

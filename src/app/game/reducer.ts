@@ -23,7 +23,7 @@ const list = createAsyncThunk(
         GameApi.one(),
         BuildingsApi.fetchAll(),
         ProductionsApi.fetchAll(),
-        ItemsApi.fetchTools(),
+        ItemsApi.fetchAll(),
       ]
     )
   },
@@ -56,7 +56,7 @@ export interface SliceState {
   game: GameDetails,
   buildings: Array<Building>;
   productions: Array<Production>;
-  tools: Array<Item>;
+  items: Array<Item>;
   error?: string;
 }
 
@@ -73,7 +73,7 @@ const initialState: SliceState = {
   },
   buildings: [],
   productions: [],
-  tools: [],
+  items: [],
   error: undefined,
 };
 
@@ -107,7 +107,7 @@ const slice = createSlice({
         state.listLoaded = false;
       })
       .addCase(list.fulfilled, (state, action) => {
-        const [ game, buildings, products, tools ] = action.payload
+        const [ game, buildings, products, items ] = action.payload
         state.listLoaded = true;
         if (!game) {
           // Should not append ...
@@ -116,7 +116,7 @@ const slice = createSlice({
         }
         state.buildings = buildings;
         state.productions = products;
-        state.tools = tools;
+        state.items = items;
         state.game = game;
       })
     b = addAsyncCases(b, saveWorker, (state, action) => {
@@ -149,7 +149,7 @@ export const selectors = {
   listLoaded(state: State) { return state.game.listLoaded },
   game,
   productions(state: State) { return state.game.productions },
-  tools(state: State) { return state.game.tools },
+  tools(state: State) { return state.game.items },
   rawBuildingById(state: State) {
     return state.game.buildings.reduce<{ [ id: string ]: Building }>((acc, c) => ({ ...acc, [ c.id ]: c }), {});
   },
@@ -171,7 +171,7 @@ export const selectors = {
       [ BuildingKind.Storage.valueOf() ]: [] as Array<TownBuilding>,
     })
   },
-  summary(state: State) { return dailySummary(state.game.game, state.game.buildings, state.game.productions, state.game.tools)}
+  summary(state: State) { return dailySummary(state.game.game, state.game.buildings, state.game.productions, state.game.items)}
 }
 
 export default slice.reducer;

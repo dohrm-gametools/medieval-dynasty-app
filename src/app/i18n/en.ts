@@ -42,6 +42,7 @@ const en = {
   'app.database.productions.table.headers.recipe': 'Recipe',
   'app.database.productions.table.headers.producedIn': 'Produced in',
   // Games
+  'app.game.tabs.buildings': 'Buildings',
   'app.game.tabs.workers': 'Workers',
   'app.game.tabs.houses': 'Houses',
   'app.game.tabs.fieldsOrOrchard': 'Fields & orchard',
@@ -58,7 +59,6 @@ const en = {
   'app.game.worker.diplomacy': 'Diplomacy',
   'app.game.worker.survival': 'Survival',
   'app.game.worker.crafting': 'Crafting',
-  'app.game.tabs.buildings': 'Buildings',
   'app.game.building.name': 'Name',
   'app.game.building.workers': 'Workers',
   'app.game.building.productions': 'Productions',
@@ -69,9 +69,9 @@ const en = {
   // Summary
   'app.game.summary.title': 'Summary',
   'app.game.summary.tax.title': 'Tax (per season)',
-  'app.game.summary.food.title': 'Consumed food (per day)',
-  'app.game.summary.water.title': 'Consumed water (per day)',
-  'app.game.summary.wood.title': 'Consumed wood (per day)',
+  'app.game.summary.food.title': 'Food (daily)',
+  'app.game.summary.water.title': 'Water (daily)',
+  'app.game.summary.wood.title': 'Wood (daily)',
   'app.game.summary.product.title': 'Items production',
   'app.game.summary.product.table.headers.item': 'Item',
   'app.game.summary.durability.title': 'Tools production',
