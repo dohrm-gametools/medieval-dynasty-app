@@ -1,5 +1,6 @@
 import { Building, GameDetails, Item, Production } from '~/src/api';
 import { getProductionLevel } from './get-production-level';
+import { EnrichedGame } from '~/src/app/game/services/get-enriched-game';
 
 export type SummaryRow = { produced: number, consumed: number, balance: number };
 export type SummaryRowWithId = SummaryRow & { id: string };
@@ -46,7 +47,7 @@ function appendAggregate(key: string, field: 'produced' | 'consumed', value: num
 function rounded(value: number): number { return Math.round(value * 100) / 100; }
 
 export function dailySummary(
-  game: GameDetails,
+  game: EnrichedGame,
   rawBuildings: Array<Building>,
   rawProductions: Array<Production>,
   rawItems: Array<Item>
@@ -60,7 +61,7 @@ export function dailySummary(
   game.buildings.forEach(building => {
     const buildingBase = rawBuildings.find(c => c.id === building.buildingId);
     if (!buildingBase) return;
-    aggregator.tax += buildingBase.tax;
+    aggregator.tax += building.tax;
     const productionLevel = getProductionLevel(buildingBase, building.assignedWorker, game) || 0;
     building.productions.forEach(production => {
       const productionBase = rawProductions.find(p => p.id === production.productionId);

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Accordion, Button, Dropdown, Icon, Table } from 'semantic-ui-react';
-import { Building, BuildingCreationId, GameDetails, Production, TownBuilding } from '~/src/api';
+import { Building, BuildingCreationId, Production, TownBuilding } from '~/src/api';
 import { ColumnType, mapColumn, SortType } from '~/src/app/game/views/utils';
 import { useI18n } from '~/src/app/i18n';
 import { Kind } from '~/src/api/buildings';
 import { default as BuildingForm } from '../components/building-form'
 import { deleteBuilding, getProductionLevel, saveBuilding, selectors } from '../reducer';
+import { EnrichedGame, EnrichedTownBuilding } from '../services';
 
 
 const columns: Array<ColumnType> = [
@@ -15,6 +16,7 @@ const columns: Array<ColumnType> = [
   { id: 'productionLevel', width: '2' },
   { id: 'workers', width: '2' },
   { id: 'productionRate', width: '2' },
+  { id: 'tax', width: '2' },
 ];
 
 function createDraft(buildingId: string): TownBuilding {
@@ -29,8 +31,8 @@ function createDraft(buildingId: string): TownBuilding {
 
 const BuildingsSection: React.ComponentType<{
   sectionId: string,
-  game: GameDetails,
-  buildings: Array<TownBuilding>,
+  game: EnrichedGame,
+  buildings: Array<EnrichedTownBuilding>,
   rawBuildings: { [ key: string ]: Building }
   productions: Array<Production>
 }> =
@@ -88,6 +90,7 @@ const BuildingsSection: React.ComponentType<{
                     <Table.Cell>{ rawBuilding ? getProductionLevel(rawBuilding, building.assignedWorker, game) || '' : '' }</Table.Cell>
                     <Table.Cell>{ `${ building.assignedWorker.length } / ${ availableWorkers || 0 }` }</Table.Cell>
                     <Table.Cell>{ building.productions.reduce((acc, c) => acc + c.percentage, 0) }</Table.Cell>
+                    <Table.Cell>{ building.tax }</Table.Cell>
                   </Table.Row>
                 )
               }) }

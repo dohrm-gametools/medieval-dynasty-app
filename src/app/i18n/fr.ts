@@ -25,6 +25,7 @@ const fr: { [ key: string ]: string } = {
   'app.database.buildings.table.headers.tax': 'Valeur de taxe',
   'app.database.buildings.table.headers.storage': 'Capacité de stockage',
   'app.database.buildings.table.headers.worker': 'Nombre de travailleurs',
+  'app.database.buildings.table.headers.capacity': 'Capacité',
   // Buildings
   'app.buildings.category.house': 'Habitation',
   'app.buildings.category.extraction': 'Extraction',
@@ -73,11 +74,12 @@ const fr: { [ key: string ]: string } = {
   'app.game.building.productions': 'Productions',
   'app.game.building.productionLevel': 'Niveau de production',
   'app.game.building.productionRate': 'Taux de production',
+  'app.game.building.tax': 'Taxe',
   'app.game.building.validation.percent.header': 'Erreur lors de la saisie des productions',
   'app.game.building.validation.percent.content': 'Il n\'est pas possible d\'attribuer plus de 100% de force de travail',
   // Summary
   'app.game.summary.title': 'Résumé',
-  'app.game.summary.tax.title': 'Taxes (par saison - Non Fonctionnel)',
+  'app.game.summary.tax.title': 'Taxes (par saison)',
   'app.game.summary.food.title': 'Nourriture (journalier)',
   'app.game.summary.water.title': 'Eau (journalier)',
   'app.game.summary.wood.title': 'Bois (journalier)',

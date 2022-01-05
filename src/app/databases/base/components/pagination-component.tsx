@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown, Grid, Pagination } from 'semantic-ui-react';
+import { Grid, Pagination } from 'semantic-ui-react';
 import { useI18n } from '~/src/app/i18n';
 
 export interface Props {

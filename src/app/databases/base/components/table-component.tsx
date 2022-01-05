@@ -1,51 +1,52 @@
 import * as React from 'react';
 import { Table } from 'semantic-ui-react';
-import { HeaderGroup, Row, TableBodyProps, TableProps, } from 'react-table';
+
+export interface Column<T extends { id: string }> {
+  id: string;
+  header: string;
+  accessor: (value: T) => any;
+}
 
 export interface Props {
-  tableProps: TableProps;
-  tableBodyProps: TableBodyProps;
-  headerGroups: Array<HeaderGroup<any>>;
-  data: Array<Row<any>>;
-  prepareRow: (row: Row<any>) => any;
+  columns: Array<Column<any>>;
+  data: Array<any>;
   sort: string;
   changeSort: (sort: string) => any;
 }
 
 const BuildingsTable: React.ComponentType<Props> =
   ({
-     tableProps,
-     tableBodyProps,
-     headerGroups,
+     columns,
      data,
-     prepareRow,
      sort,
      changeSort,
    }) => (
-    <Table id="items-table" celled striped compact { ...tableProps } fixed sortable={ true }>
+    <Table id="items-table" celled striped compact fixed sortable={ true }>
       <Table.Header fullWidth>
-        { headerGroups.map(headerGroup => (
-          <Table.Row { ...headerGroup.getHeaderGroupProps() }>
-            { headerGroup.headers.map(column => {
-              const isSorted = sort === column.id || sort === `-${ column.id }`;
-              const direction = isSorted ? (sort.indexOf('-') === 0 ? 'descending' : 'ascending') : undefined;
-              return (
-                <Table.HeaderCell
-                  sorted={ direction }
-                  content={ column.render('Header') }
-                  onClick={ () => changeSort(direction === 'ascending' ? `-${ column.id }` : (direction === 'descending' ? '' : column.id)) }
-                  { ...column.getHeaderProps() }/>
-              )
-            }) }
-          </Table.Row>
-        )) }
+        <Table.Row>
+          { columns.map(column => {
+            const isSorted = sort === column.id || sort === `-${ column.id }`;
+            const direction = isSorted ? (sort.indexOf('-') === 0 ? 'descending' : 'ascending') : undefined;
+            return (
+              <Table.HeaderCell
+                key={ column.id }
+                sorted={ direction }
+                content={ column.header }
+                onClick={ () => changeSort(direction === 'ascending' ? `-${ column.id }` : (direction === 'descending' ? '' : column.id)) }
+              />
+            )
+          }) }
+        </Table.Row>
       </Table.Header>
-      <Table.Body { ...tableBodyProps }>
-        { data.map((row) => {
-          prepareRow(row);
+      <Table.Body>
+        { data.map((row, idx) => {
           return (
-            <Table.Row { ...row.getRowProps() }>
-              { row.cells.map(cell => <Table.Cell { ...cell.getCellProps() }>{ cell.render('Cell') }</Table.Cell>) }
+            <Table.Row key={ `row-${ row.id }` }>
+              {
+                columns.map(column => {
+                  return <Table.Cell key={ row[ 'id' ] || `${ column.id }-${ idx }` }>{ column.accessor(row) }</Table.Cell>
+                })
+              }
             </Table.Row>
           )
         }) }

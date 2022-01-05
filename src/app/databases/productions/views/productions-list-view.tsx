@@ -1,16 +1,15 @@
 import * as React from 'react';
 
-import { Column } from 'react-table';
-import { default as BaseListView } from '../../base/views/list-view'
+import { default as BaseListView, Column } from '../../base/views/list-view'
 import { changeParams, displayProducedIn, displayRecipe, fetch, reduxKey, reset, selectors } from '../reducer';
 import { useI18n } from '~/src/app/i18n';
 import { Production } from '~/src/api';
 
 
 const columnsFactory = (t: (key: string) => string, lang: string): Array<Column<Production>> => [
-  { id: 'name', Header: t('app.database.productions.table.headers.name'), accessor: d => t(`db.items.${ d.itemId }`) },
-  { id: 'recipe', Header: t('app.database.productions.table.headers.recipe'), accessor: d => displayRecipe(d, t) },
-  { id: 'producedIn', Header: t('app.database.productions.table.headers.producedIn'), accessor: d => displayProducedIn(d, t) },
+  { id: 'name', header: t('app.database.productions.table.headers.name'), accessor: d => t(`db.items.${ d.itemId }`) },
+  { id: 'recipe', header: t('app.database.productions.table.headers.recipe'), accessor: d => displayRecipe(d, t) },
+  { id: 'producedIn', header: t('app.database.productions.table.headers.producedIn'), accessor: d => displayProducedIn(d, t) },
 ];
 
 const ProductionsListView: React.ComponentType = () => {

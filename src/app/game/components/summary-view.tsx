@@ -15,7 +15,7 @@ const SummaryComponent: React.ComponentType = () => {
         <Card.Header>{ t('app.game.summary.title') }</Card.Header>
         <List>
           <List.Item>
-            {/*<List.Header>{ t('app.game.summary.tax.title') }: { summary.totalTax }</List.Header>*/ }
+            <List.Header>{ t('app.game.summary.tax.title') }: { summary.totalTax }</List.Header>
             <Table striped celled compact>
               <Table.Header>
                 <Table.Row>

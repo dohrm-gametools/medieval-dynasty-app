@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { AsyncThunkAction } from '@reduxjs/toolkit';
 import { ChangeParamsPayload, ReducerState } from '../reducer';
-import { Column, useTable } from 'react-table';
-import { default as TableComponent } from '../components/table-component';
+import { Column, default as TableComponent } from '../components/table-component';
 import { default as PaginationComponent } from '../components/pagination-component';
+
+export { Column };
 
 export interface Props {
   reduxKey: string;
@@ -44,15 +45,11 @@ const ListComponent: React.ComponentType<{
       queryChanged(page, sort);
       dispatch(changeParams({ sort: sort as any, page, pageSize: pageSizeV }));
     }
-    const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows, } = useTable({ columns, data: itemsV, });
     return (
       <>
         <TableComponent
-          tableProps={ getTableProps() }
-          tableBodyProps={ getTableBodyProps() }
-          data={ rows }
-          prepareRow={ prepareRow }
-          headerGroups={ headerGroups }
+          data={ itemsV }
+          columns={ columns }
           sort={ sortV }
           changeSort={ newSort => updateParams(newSort, pageV) }
         />

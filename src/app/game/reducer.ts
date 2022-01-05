@@ -1,19 +1,8 @@
 import { ActionReducerMapBuilder, AsyncThunk, CaseReducer, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { State as I18nState } from '~/src/app/i18n';
-import {
-  Building,
-  BuildingKind,
-  BuildingsApi,
-  GameApi,
-  GameDetails,
-  Item,
-  ItemsApi,
-  Production,
-  ProductionsApi,
-  TownBuilding,
-  Worker,
-} from '~/src/api';
-import { dailySummary } from './services/daily-summary';
+import { Building, BuildingKind, BuildingsApi, GameApi, GameDetails, Item, ItemsApi, Production, ProductionsApi, TownBuilding, Worker, } from '~/src/api';
+import * as services from './services';
+import { EnrichedTownBuilding } from './services';
 
 export const reduxKey = 'game';
 const list = createAsyncThunk(
@@ -53,7 +42,7 @@ const deleteBuilding = createAsyncThunk(
 export interface SliceState {
   listLoaded: boolean;
   loading: boolean;
-  game: GameDetails,
+  game: services.EnrichedGame,
   buildings: Array<Building>;
   productions: Array<Production>;
   items: Array<Item>;
@@ -76,6 +65,11 @@ const initialState: SliceState = {
   items: [],
   error: undefined,
 };
+
+const defaultOnSuccess: CaseReducer<SliceState, PayloadAction<GameDetails>> = (state, action) => {
+  state.loading = false;
+  state.game = services.getEnrichedGame(action.payload, state.buildings);
+}
 
 function addAsyncCases<Payload>(
   builder: ActionReducerMapBuilder<SliceState>,
@@ -117,24 +111,12 @@ const slice = createSlice({
         state.buildings = buildings;
         state.productions = products;
         state.items = items;
-        state.game = game;
+        state.game = services.getEnrichedGame(game, buildings);
       })
-    b = addAsyncCases(b, saveWorker, (state, action) => {
-      state.loading = false;
-      state.game = action.payload;
-    });
-    b = addAsyncCases(b, deleteWorker, (state, action) => {
-      state.loading = false;
-      state.game = action.payload;
-    });
-    b = addAsyncCases(b, saveBuilding, (state, action) => {
-      state.loading = false;
-      state.game = action.payload;
-    });
-    b = addAsyncCases(b, deleteBuilding, (state, action) => {
-      state.loading = false;
-      state.game = action.payload;
-    });
+    b = addAsyncCases(b, saveWorker, defaultOnSuccess);
+    b = addAsyncCases(b, deleteWorker, defaultOnSuccess);
+    b = addAsyncCases(b, saveBuilding, defaultOnSuccess);
+    b = addAsyncCases(b, deleteBuilding, defaultOnSuccess);
   }
 });
 
@@ -161,17 +143,17 @@ export const selectors = {
       }
       return acc;
     }, {
-      [ BuildingKind.House.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.Extraction.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.Hunting.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.Farming.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.AnimalHusbandry.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.Production.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.Service.valueOf() ]: [] as Array<TownBuilding>,
-      [ BuildingKind.Storage.valueOf() ]: [] as Array<TownBuilding>,
+      [ BuildingKind.House.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.Extraction.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.Hunting.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.Farming.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.AnimalHusbandry.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.Production.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.Service.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [ BuildingKind.Storage.valueOf() ]: [] as Array<EnrichedTownBuilding>,
     })
   },
-  summary(state: State) { return dailySummary(state.game.game, state.game.buildings, state.game.productions, state.game.items)}
+  summary(state: State) { return services.dailySummary(state.game.game, state.game.buildings, state.game.productions, state.game.items)}
 }
 
 export default slice.reducer;

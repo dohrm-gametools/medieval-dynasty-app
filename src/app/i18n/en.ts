@@ -16,6 +16,7 @@ const en = {
   'app.database.buildings.table.headers.tax': 'Tax value',
   'app.database.buildings.table.headers.storage': 'Storage capacity',
   'app.database.buildings.table.headers.worker': 'Worker number',
+  'app.database.buildings.table.headers.capacity': 'Capacity',
   // Buildings
   'app.buildings.category.house': 'House',
   'app.buildings.category.extraction': 'Extraction',
@@ -64,6 +65,7 @@ const en = {
   'app.game.building.productions': 'Productions',
   'app.game.building.productionLevel': 'Production level',
   'app.game.building.productionRate': 'Production rate',
+  'app.game.building.tax': 'Tax',
   'app.game.building.validation.percent.header': 'Error when you set production rate',
   'app.game.building.validation.percent.content': 'It is not possible to allocate more than 100% of works',
   // Summary
