@@ -154,7 +154,7 @@
   {"itemId":"wooden-plate", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 5,"producedPerDay": 1.44, "costs": ["log:1"]},
   {"itemId":"wooden-cup", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 5,"producedPerDay": 1.5, "costs": ["log:1"]},
   {"itemId":"wooden-spoon", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": 3, "costs": ["stick:1"]},
-  {"itemId":"wooden-ladle", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": 2, "costs": ["stick:1"]},
+  {"itemId":"wooden-ladle", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": 3, "costs": ["stick:1"]},
   {"itemId":"torch", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": -1, "costs": ["stick:2","leather:2"]},
   {"itemId":"medium-wicker-basket", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": -1, "costs": ["stick:8"]},
   {"itemId":"large-wicker-basket", "buildingIds": "workshop-i,workshop-ii,workshop-iii", "stack": 1,"producedPerDay": -1, "costs": ["stick:12"]},
