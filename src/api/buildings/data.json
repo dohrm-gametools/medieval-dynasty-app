@@ -14,8 +14,8 @@
   {"id": "excavation-shed", "tax":60  ,"category":"extraction", "i18n": { "en": "Excavation Shed", "fr": "Abri d'excavation"}, "storage": 100, "worker": 2, "workerSkill": "extraction"},
   {"id": "mine", "tax":180  ,"category":"extraction", "i18n": { "en": "Mine", "fr": "Mine"}, "storage": 100, "worker": 6, "workerSkill": "extraction"},
   {"id": "well", "tax":20  ,"category":"extraction", "i18n": { "en": "Well", "fr": "Puits"}, "storage": 50, "worker": 1, "workerSkill": "farming"},
-  {"id": "herbalist's-hut-i", "tax":20  ,"category":"extraction", "i18n": { "en": "Herbalist's Hut I", "fr": "Atelier de l'herboriste I"}, "storage": 50, "worker": 1, "workerSkill": "survival"},
-  {"id": "herbalist's-hut-ii", "tax":40  ,"category":"extraction", "i18n": { "en": "Herbalist's Hut II", "fr": "Atelier de l'herboriste II"}, "storage": 100, "worker": 2, "workerSkill": "survival"},
+  {"id": "herbalist-s-hut-i", "tax":20  ,"category":"extraction", "i18n": { "en": "Herbalist's Hut I", "fr": "Atelier de l'herboriste I"}, "storage": 50, "worker": 1, "workerSkill": "survival"},
+  {"id": "herbalist-s-hut-ii", "tax":40  ,"category":"extraction", "i18n": { "en": "Herbalist's Hut II", "fr": "Atelier de l'herboriste II"}, "storage": 100, "worker": 2, "workerSkill": "survival"},
   {"id": "hunting-lodge-i", "tax":30  ,"category":"hunting", "i18n": { "en": "Hunting Lodge I", "fr": "Pavillon de chasse I"}, "storage": 50, "worker": 2, "workerSkill": "hunting"},
   {"id": "hunting-lodge-ii", "tax":60  ,"category":"hunting", "i18n": { "en": "Hunting Lodge II", "fr": "Pavillon de chasse II"}, "storage": 100, "worker": 4, "workerSkill": "hunting"},
   {"id": "fishing-hut-i", "tax":20  ,"category":"hunting", "i18n": { "en": "Fishing Hut I", "fr": "Cabane de pêche I"}, "storage": 25, "worker": 1, "workerSkill": "hunting"},
@@ -38,5 +38,11 @@
   {"id": "sewing-hut-ii", "tax":100  ,"category":"production", "i18n": { "en": "Sewing Hut II", "fr": "Atelier de couture II"}, "storage": 100, "worker": 1, "workerSkill": "crafting"},
   {"id": "sewing-hut-iii", "tax":140  ,"category":"production", "i18n": { "en": "Sewing Hut III", "fr": "Atelier de couture III"}, "storage": 200, "worker": 2, "workerSkill": "crafting"},
   {"id": "market-stall", "tax":60  ,"category":"service", "i18n": { "en": "Market Stall", "fr": "Etal de marché"}, "worker": 1, "workerSkill": "diplomacy"},
-  {"id": "builder's-hut", "tax":100  ,"category":"service", "i18n": { "en": "Builder's hut", "fr": "Atelier du constructeur"}, "storage": 100, "worker": 1, "workerSkill": "crafting"}
+  {"id": "builder-s-hut", "tax":100  ,"category":"service", "i18n": { "en": "Builder's hut", "fr": "Atelier du constructeur"}, "storage": 100, "worker": 1, "workerSkill": "crafting"},
+  {"id": "resource-storage-i", "tax":60  ,"category":"storage", "i18n": { "en": "Resource Storage I", "fr": "Entrepôt de ressources I"}, "storage": 1000},
+  {"id": "resource-storage-ii", "tax":120  ,"category":"storage", "i18n": { "en": "Resource Storage II", "fr": "Entrepôt de ressources II"}, "storage": 2000},
+  {"id": "resource-storage-iii", "tax":180  ,"category":"storage", "i18n": { "en": "Resource Storage III", "fr": "Entrepôt de ressources III"}, "storage": 4000},
+  {"id": "food-storage-i", "tax":40  ,"category":"storage", "i18n": { "en": "Food Storage I", "fr": "Entrepôt de nourriture I"}, "storage": 500},
+  {"id": "food-storage-ii", "tax":80  ,"category":"storage", "i18n": { "en": "Food Storage II", "fr": "Entrepôt de nourriture II"}, "storage": 1000},
+  {"id": "food-storage-iii", "tax":120  ,"category":"storage", "i18n": { "en": "Food Storage III", "fr": "Entrepôt de nourriture III"}, "storage": 2000}
 ]

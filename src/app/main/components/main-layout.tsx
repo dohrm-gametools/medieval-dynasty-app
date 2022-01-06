@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Stack } from '@fluentui/react';
 import { Dropdown, Grid, Menu } from 'semantic-ui-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useI18n } from '~/src/app/i18n';
@@ -19,8 +20,8 @@ export const MainLayout: React.ComponentType<Props> = ({ routes }) => {
         <Menu.Menu position="right">
           <Dropdown item text={ t('menu.languages.title') }>
             <Dropdown.Menu>
-              <Dropdown.Item selected={ lang === 'fr' } onClick={ () => setSelectedLang('fr') }>{t('lang.fr')}</Dropdown.Item>
-              <Dropdown.Item selected={ lang === 'en' } onClick={ () => setSelectedLang('en') }>{t('lang.en')}</Dropdown.Item>
+              <Dropdown.Item selected={ lang === 'fr' } onClick={ () => setSelectedLang('fr') }>{ t('lang.fr') }</Dropdown.Item>
+              <Dropdown.Item selected={ lang === 'en' } onClick={ () => setSelectedLang('en') }>{ t('lang.en') }</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </Menu.Menu>

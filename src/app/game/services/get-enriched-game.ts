@@ -3,6 +3,7 @@ import { Building, GameDetails, TownBuilding, Worker } from '~/src/api';
 export interface EnrichedWorker extends Worker {}
 
 export interface EnrichedTownBuilding extends TownBuilding {
+  raw: Building;
   tax: number;
 }
 
@@ -33,11 +34,12 @@ export function getTownLevel(nbBuilding: number): number {
   return townLevel;
 }
 
-function mapBuilding(townBuilding: TownBuilding, rawBuildings: Array<Building>, taxModifier: number): EnrichedTownBuilding {
+function mapBuilding(townBuilding: TownBuilding, rawBuildings: Array<Building>, taxModifier: number): EnrichedTownBuilding | undefined {
   const rawBuilding = rawBuildings.find(b => b.id === townBuilding.buildingId);
-  return {
+  return !rawBuilding ? undefined : {
     ...townBuilding,
-    tax: Math.max(Math.round((rawBuilding ? rawBuilding.tax * taxModifier : 0) * 100) / 100, 1)
+    raw: rawBuilding,
+    tax: Math.max(Math.round(rawBuilding.tax * taxModifier * 100) / 100, 1)
   }
 }
 
@@ -50,6 +52,12 @@ export function getEnrichedGame(game: GameDetails, rawBuildings: Array<Building>
   const taxModifier = townLevel * 0.125;
   return {
     workers: game.workers.map(w => mapWorker(w, game, rawBuildings)),
-    buildings: game.buildings.map(b => mapBuilding(b, rawBuildings, taxModifier)),
+    buildings: game.buildings.reduce<Array<EnrichedTownBuilding>>((acc, b) => {
+      const item = mapBuilding(b, rawBuildings, taxModifier);
+      if (item) {
+        return [ ...acc, item ]
+      }
+      return acc;
+    }, []),
   }
 }

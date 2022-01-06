@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Accordion, Button, Dropdown, Icon, Table } from 'semantic-ui-react';
+import { Button, Dropdown, DropdownMenu, Table } from 'semantic-ui-react';
 import { Building, BuildingCreationId, Production, TownBuilding } from '~/src/api';
 import { ColumnType, mapColumn, SortType } from '~/src/app/game/views/utils';
 import { useI18n } from '~/src/app/i18n';
-import { Kind } from '~/src/api/buildings';
 import { default as BuildingForm } from '../components/building-form'
 import { deleteBuilding, getProductionLevel, saveBuilding, selectors } from '../reducer';
 import { EnrichedGame, EnrichedTownBuilding } from '../services';
+import { Kind } from '~/src/api/buildings';
+import { DropdownItemProps } from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 
 
 const columns: Array<ColumnType> = [
+  { id: 'category', width: '1' },
   { id: '', width: '1' },
   { id: 'name', width: '4' },
   { id: 'productionLevel', width: '2' },
@@ -28,16 +30,15 @@ function createDraft(buildingId: string): TownBuilding {
   }
 }
 
+type BuildingByCategory = { category: string, buildings: Array<EnrichedTownBuilding> };
 
-const BuildingsSection: React.ComponentType<{
-  sectionId: string,
+const BuildingsTable: React.ComponentType<{
   game: EnrichedGame,
-  buildings: Array<EnrichedTownBuilding>,
-  rawBuildings: { [ key: string ]: Building }
+  buildings: Array<BuildingByCategory>,
+  rawBuildings: { [ key: string ]: Building },
   productions: Array<Production>
 }> =
   ({
-     sectionId,
      game,
      buildings,
      rawBuildings,
@@ -62,24 +63,32 @@ const BuildingsSection: React.ComponentType<{
       dispatch(saveBuilding({ building: newBuilding }));
       setSelected(undefined);
     }
+    const buildingOptions = Object.keys(rawBuildings).reduce<{ [ category: string ]: Array<{ text: string, value: string }> }>((acc, c) => {
+      const current = rawBuildings[ c ];
+      const category = current.category.valueOf();
+      const id = current.id;
+      const label = t(`db.buildings.${ id }`);
+      if (!acc[ current.category.valueOf() ]) {
+        return {
+          ...acc,
+          [ category ]: [ { text: label, value: id } ]
+        }
+      }
+      return { ...acc, [ category ]: [ ...acc[ category ], { text: label, value: id } ] }
+    }, {});
 
     return (
       <>
-        <Accordion.Title active={ opened } onClick={ () => setOpened(!opened) }>
-          <Icon name="dropdown"/>
-          { t(`app.buildings.category.${ sectionId }`) }
-        </Accordion.Title>
-        <Accordion.Content active={ opened }>
-          <Table celled>
-            <Table.Header>
-              <Table.Row>{ columns.map(v => mapColumn(v, 'app.game.building', t, sort, setSort)) }</Table.Row>
-            </Table.Header>
-            <Table.Body>
-              { buildings.map(building => {
-                const rawBuilding = rawBuildings[ building.buildingId ];
-                const availableWorkers = rawBuilding && rawBuilding.category === Kind.House ? rawBuilding.capacity : rawBuilding?.worker;
+        <Table celled>
+          <Table.Header>
+            <Table.Row>{ columns.map(v => mapColumn(v, 'app.game.building', t, sort, setSort)) }</Table.Row>
+          </Table.Header>
+          <Table.Body>
+            { buildings.map(c => {
+              return c.buildings.map((building, idx) => {
                 return (
                   <Table.Row key={ building.id }>
+                    { idx === 0 ? <Table.Cell rowSpan={ c.buildings.length + '' }>{ t(`app.buildings.category.${ c.category }`) }</Table.Cell> : null }
                     <Table.Cell>
                       <Button.Group>
                         <Button icon="edit" onClick={ () => onEdit(building) }/>
@@ -87,43 +96,39 @@ const BuildingsSection: React.ComponentType<{
                       </Button.Group>
                     </Table.Cell>
                     <Table.Cell>{ t(`db.buildings.${ building.buildingId }`) }</Table.Cell>
-                    <Table.Cell>{ rawBuilding ? getProductionLevel(rawBuilding, building.assignedWorker, game) || '' : '' }</Table.Cell>
-                    <Table.Cell>{ `${ building.assignedWorker.length } / ${ availableWorkers || 0 }` }</Table.Cell>
+                    <Table.Cell>{ getProductionLevel(building.raw, building.assignedWorker, game) || '' }</Table.Cell>
+                    <Table.Cell>{ `${ building.assignedWorker.length } / ${ (c.category === Kind.House ? building.raw.capacity : building.raw.worker) || 0 }` }</Table.Cell>
                     <Table.Cell>{ building.productions.reduce((acc, c) => acc + c.percentage, 0) }</Table.Cell>
                     <Table.Cell>{ building.tax }</Table.Cell>
                   </Table.Row>
                 )
-              }) }
-            </Table.Body>
-            <Table.Footer>
-              <Table.Row>
-                <Table.Cell colSpan="10">
-                  <Dropdown
-                    icon="add"
-                    floating
-                    button
-                    className="icon"
 
-                  >
-                    <Dropdown.Menu>
-                      { Object
-                        .values(rawBuildings)
-                        .map(b => ({ id: b.id, label: t(`db.buildings.${ b.id }`) }))
-                        .map(c => (
-                            <Dropdown.Item
-                              key={ c.id } value={ c.id } text={ c.label }
-                              onClick={ (e, { value }) => onAdd(value) }
-                            />
-                          )
-                        )
-                      }
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Table.Cell>
-              </Table.Row>
-            </Table.Footer>
-          </Table>
-        </Accordion.Content>
+              })
+            }) }
+          </Table.Body>
+        </Table>
+        <Dropdown
+          icon="add"
+          button
+          floating
+          scrolling
+          className="icon"
+        >
+          <Dropdown.Menu>
+            { Object.keys(buildingOptions).map(category => (
+              <>
+                <Dropdown.Header key={ `header.${ category }` }>{ t(`app.buildings.category.${ category }`) }</Dropdown.Header>
+                <Dropdown.Divider key={ `divider.${ category }` }/>
+                {
+                  buildingOptions[ category ].map(b => (
+                    <Dropdown.Item key={ b.value } { ...b } onClick={ (e, { value }) => onAdd(value) }/>
+                  ))
+                }
+              </>
+            )) }
+          </Dropdown.Menu>
+        </Dropdown>
+
         { selected ? <BuildingForm
           building={ { ...selected } }
           productions={ productions.slice() }
@@ -141,33 +146,11 @@ const BuildingsView: React.ComponentType = () => {
   const buildings = useSelector(selectors.buildingsByCategory);
   const rawBuildings = useSelector(selectors.rawBuildingById);
   const productions = useSelector(selectors.productions);
-  const reduceRaw = (kind: Kind) => (acc: { [ key: string ]: Building }, c: Building) => {
-    if (c.category !== kind) return acc;
-    return { ...acc, [ c.id ]: c };
-  }
-  const section = (kind: Kind) => {
-    const b = Object.values(rawBuildings).reduce(reduceRaw(kind), {});
-    return (
-      <BuildingsSection
-        sectionId={ kind.valueOf() }
-        game={ game }
-        buildings={ buildings[ kind.valueOf() ] }
-        rawBuildings={ b }
-        productions={ productions.filter(p => p.producedIn.findIndex(pi => !!b[ pi ]) >= 0) }
-      />
-    );
-  }
+  const groupedBuildings = Object.keys(buildings).reduce<Array<BuildingByCategory>>((acc, c) => {
+    return [ ...acc, { category: c, buildings: buildings[ c ] || [] } ]
+  }, []);
   return (
-    <Accordion>
-      { section(Kind.House) }
-      { section(Kind.Extraction) }
-      { section(Kind.Hunting) }
-      {/*{ section(Kind.Farming) }*/ }
-      { section(Kind.AnimalHusbandry) }
-      { section(Kind.Production) }
-      {/*{ section(Kind.Service) }*/ }
-      {/*{ section(Kind.Storage) }*/ }
-    </Accordion>
+    <BuildingsTable buildings={ groupedBuildings } game={ game } productions={ productions } rawBuildings={ rawBuildings }/>
   );
 };
 

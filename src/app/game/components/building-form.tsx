@@ -157,6 +157,7 @@ class BuildingForm extends React.Component<{
                       <Form.Field
                         as={ Grid }
                         key={ `prod-${ d.originalIdx }` }
+                        disabled={ prod.producedPerDay <= 0 }
                         label={
                           <Header as="label">
                             { `${ t(`db.items.${ prod.itemId }`) }${ prod.stack > 1 ? ` x ${ prod.stack }` : '' }` }

@@ -60,6 +60,7 @@ const en = {
   'app.game.worker.diplomacy': 'Diplomacy',
   'app.game.worker.survival': 'Survival',
   'app.game.worker.crafting': 'Crafting',
+  'app.game.building.category': 'Category',
   'app.game.building.name': 'Name',
   'app.game.building.workers': 'Workers',
   'app.game.building.productions': 'Productions',

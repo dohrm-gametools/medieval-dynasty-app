@@ -17,6 +17,7 @@ export interface ProductionWithAssignment {
 export interface TownBuilding {
   id: string;
   buildingId: string;
+  alias?: string;
   assignedWorker: Array<string>;
   productions: Array<ProductionWithAssignment>;
 }
