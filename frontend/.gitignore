@@ -1,5 +1,5 @@
-.env
 .idea
-.parcel-cache
 node_modules
+.parcel-cache
 dist
+.env
