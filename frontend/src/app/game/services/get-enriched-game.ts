@@ -8,6 +8,7 @@ export interface EnrichedTownBuilding extends TownBuilding {
 }
 
 export interface EnrichedGame {
+  id: string;
   workers: Array<EnrichedWorker>;
   buildings: Array<EnrichedTownBuilding>;
 }
@@ -51,6 +52,7 @@ export function getEnrichedGame(game: GameDetails, rawBuildings: Array<Building>
   const townLevel = getTownLevel(game.buildings.length)
   const taxModifier = townLevel * 0.125;
   return {
+    id: game.id,
     workers: game.workers.map(w => mapWorker(w, game, rawBuildings)),
     buildings: game.buildings.reduce<Array<EnrichedTownBuilding>>((acc, b) => {
       const item = mapBuilding(b, rawBuildings, taxModifier);

@@ -7,7 +7,7 @@
     "build": "parcel build src/index.html --public-url /",
     "postbuild": "cp dist/index.html dist/404.html && cp public/CNAME dist/CNAME",
     "clean": "rimraf ./dist",
-    "start:app": "parcel src/index.html --open",
+    "start:app": "parcel watch src/index.html",
     "start": "run-p start:*"
   },
   "keywords": [
@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@artsy/fresnel": "^3.2.1",
+    "@auth0/auth0-react": "^1.8.0",
     "@fluentui/react": "^8.49.0",
     "@reduxjs/toolkit": "^1.7.1",
     "@types/pouchdb": "^6.4.0",
@@ -41,5 +42,8 @@
     "parcel": "^2.0.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.5.4"
-  }
+  },
+  "parcelIgnore": [
+    "config.js"
+  ]
 }

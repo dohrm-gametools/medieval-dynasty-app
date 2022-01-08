@@ -6,12 +6,36 @@ import { useI18n } from '~/src/app/i18n';
 import { Item } from '~/src/api';
 
 
+const asHeaderRow = (key: keyof Item, t: (key: string) => string): Column<Item> => (
+  { id: key, header: t(`app.database.items.table.headers.${ key }`), accessor: d => d[ key ] }
+)
+
 const columnsFactory = (t: (key: string) => string, lang: string): Array<Column<Item>> => [
   { id: 'category', header: t('app.database.items.table.headers.category'), accessor: d => t(`app.items.category.${ d.category.valueOf() }`) },
   { id: 'name', header: t('app.database.items.table.headers.name'), accessor: d => t(`db.items.${ d.id }`) },
-  { id: 'durability', header: t('app.database.items.table.headers.durability'), accessor: d => d.durability },
-  { id: 'weight', header: t('app.database.items.table.headers.weight'), accessor: d => d.weight },
-  { id: 'price', header: t('app.database.items.table.headers.price'), accessor: d => d.price }
+  asHeaderRow('durability', t),
+  asHeaderRow('weight', t),
+  asHeaderRow('price', t),
+  // asHeaderRow('tool', t),
+  // asHeaderRow('damage', t),
+  // asHeaderRow('poisoning', t),
+  // asHeaderRow('extraction', t),
+  // asHeaderRow('heat', t),
+  // asHeaderRow('cold', t),
+  // asHeaderRow('weightLimit', t),
+  // asHeaderRow('health', t),
+  // asHeaderRow('stamina', t),
+  // asHeaderRow('food', t),
+  // asHeaderRow('water', t),
+  // asHeaderRow('wood', t),
+  // asHeaderRow('alcohol', t),
+  // asHeaderRow('foodConsumption', t),
+  // asHeaderRow('staminaConsumption', t),
+  // asHeaderRow('waterConsumption', t),
+  // asHeaderRow('additionalHealth', t),
+  // asHeaderRow('additionalDamage', t),
+  // asHeaderRow('temperatureTolerance', t),
+  // asHeaderRow('duration', t),
 ];
 
 const ItemsListView: React.ComponentType = () => {

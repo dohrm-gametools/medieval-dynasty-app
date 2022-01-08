@@ -21,22 +21,22 @@ const list = createAsyncThunk(
 //
 const saveWorker = createAsyncThunk(
   `${ reduxKey }/saveWorker`,
-  (payload: { worker: Worker }) => GameApi.createOrUpdateWorker(payload.worker),
+  (payload: { id: string, worker: Worker }) => GameApi.createOrUpdateWorker(payload.id, payload.worker),
 )
 
 const deleteWorker = createAsyncThunk(
   `${ reduxKey }/deleteWorker`,
-  (payload: { worker: string }) => GameApi.deleteWorker(payload.worker),
+  (payload: { id: string, worker: string }) => GameApi.deleteWorker(payload.id, payload.worker),
 )
 
 const saveBuilding = createAsyncThunk(
   `${ reduxKey }/saveBuilding`,
-  (payload: { building: TownBuilding }) => GameApi.createOrUpdateBuilding(payload.building),
+  (payload: { id: string, building: TownBuilding }) => GameApi.createOrUpdateBuilding(payload.id, payload.building),
 )
 
 const deleteBuilding = createAsyncThunk(
   `${ reduxKey }/deleteBuilding`,
-  (payload: { building: string }) => GameApi.deleteBuilding(payload.building),
+  (payload: { id: string, building: string }) => GameApi.deleteBuilding(payload.id, payload.building),
 )
 
 export interface SliceState {

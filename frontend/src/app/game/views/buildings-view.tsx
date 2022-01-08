@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Dropdown, DropdownMenu, Table } from 'semantic-ui-react';
+import { Button, Dropdown, Table } from 'semantic-ui-react';
 import { Building, BuildingCreationId, Production, TownBuilding } from '~/src/api';
 import { ColumnType, mapColumn, SortType } from '~/src/app/game/views/utils';
 import { useI18n } from '~/src/app/i18n';
@@ -8,7 +8,6 @@ import { default as BuildingForm } from '../components/building-form'
 import { deleteBuilding, getProductionLevel, saveBuilding, selectors } from '../reducer';
 import { EnrichedGame, EnrichedTownBuilding } from '../services';
 import { Kind } from '~/src/api/buildings';
-import { DropdownItemProps } from 'semantic-ui-react/dist/commonjs/modules/Dropdown/DropdownItem';
 
 
 const columns: Array<ColumnType> = [
@@ -46,7 +45,6 @@ const BuildingsTable: React.ComponentType<{
    }) => {
     const dispatch = useDispatch();
     const { t } = useI18n();
-    const [ opened, setOpened ] = React.useState(false);
     const [ selected, setSelected ] = React.useState<TownBuilding | undefined>()
     const [ sort, setSort ] = React.useState<SortType>(undefined);
 
@@ -54,13 +52,13 @@ const BuildingsTable: React.ComponentType<{
       setSelected(b);
     }
     const onRemove = (b: TownBuilding) => {
-      dispatch(deleteBuilding({ building: b.id }));
+      dispatch(deleteBuilding({ id: game.id, building: b.id }));
     }
     const onAdd = (buildingId: any) => {
       setSelected(createDraft(buildingId));
     }
     const onSave = (newBuilding: TownBuilding) => {
-      dispatch(saveBuilding({ building: newBuilding }));
+      dispatch(saveBuilding({ id: game.id, building: newBuilding }));
       setSelected(undefined);
     }
     const buildingOptions = Object.keys(rawBuildings).reduce<{ [ category: string ]: Array<{ text: string, value: string }> }>((acc, c) => {

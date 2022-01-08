@@ -11,7 +11,7 @@ const columnsFactory = (t: (key: string) => string, lang: string): Array<Column<
   { id: 'tax', header: t('app.database.buildings.table.headers.tax'), accessor: d => d.tax },
   { id: 'storage', header: t('app.database.buildings.table.headers.storage'), accessor: d => d.storage },
   { id: 'worker', header: t('app.database.buildings.table.headers.worker'), accessor: d => d.worker },
-  { id: 'worker', header: t('app.database.buildings.table.headers.capacity'), accessor: d => d.capacity },
+  { id: 'capacity', header: t('app.database.buildings.table.headers.capacity'), accessor: d => d.capacity },
 ];
 
 const BuildingsListView: React.ComponentType = () => {

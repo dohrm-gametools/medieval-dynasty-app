@@ -2,12 +2,13 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { ThemeProvider } from '@fluentui/react';
+
 // App
 import { appStore } from '~/src/app-config';
 import { MainLayout } from '~/src/app/main/components'
 import { I18nLoader } from '~/src/app/i18n';
-import { GameView, WorkersView, BuildingsView } from '~/src/app/game';
+import { BuildingsView, GameView, WorkersView } from '~/src/app/game';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 import { DatabaseRootComponent } from '~/src/app/databases/root'
 import { ItemsListView } from '~/src/app/databases/items';
@@ -24,8 +25,8 @@ const Redirect: React.ComponentType<{ to: string }> = ({ to }) => {
 
 const Application = () => (
   <Provider store={ appStore }>
-    <I18nLoader>
-      <ThemeProvider>
+    <Auth0Provider domain="dohrm.eu.auth0.com" clientId="MKMfoFtjys1ZsB2i7wma9VwXqAwCv9oc" redirectUri={ window.location.origin }>
+      <I18nLoader>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={ <MainLayout routes={ [
@@ -47,8 +48,8 @@ const Application = () => (
             </Route>
           </Routes>
         </BrowserRouter>
-      </ThemeProvider>
-    </I18nLoader>
+      </I18nLoader>
+    </Auth0Provider>
   </Provider>
 );
 

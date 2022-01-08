@@ -50,7 +50,7 @@ const WorkersView: React.ComponentType = () => {
     }
   }
   const onSave = (worker: Worker) => {
-    dispatch(saveWorker({ worker }))
+    dispatch(saveWorker({ id: game.id, worker }))
     setSelected(undefined);
   }
   const onEdit = (worker: Worker) => {
@@ -58,7 +58,7 @@ const WorkersView: React.ComponentType = () => {
   }
   const onRemove = (worker: Worker) => {
     // TODO Add confirmation
-    dispatch(deleteWorker({ worker: worker.id }))
+    dispatch(deleteWorker({ id: game.id, worker: worker.id }))
   }
 
   return (

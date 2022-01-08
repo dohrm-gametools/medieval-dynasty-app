@@ -29,7 +29,7 @@ const BuildingsTable: React.ComponentType<Props> =
             const direction = isSorted ? (sort.indexOf('-') === 0 ? 'descending' : 'ascending') : undefined;
             return (
               <Table.HeaderCell
-                key={ column.id }
+                key={ `header-${ column.id }` }
                 sorted={ direction }
                 content={ column.header }
                 onClick={ () => changeSort(direction === 'ascending' ? `-${ column.id }` : (direction === 'descending' ? '' : column.id)) }
@@ -44,7 +44,7 @@ const BuildingsTable: React.ComponentType<Props> =
             <Table.Row key={ `row-${ row.id }` }>
               {
                 columns.map(column => {
-                  return <Table.Cell key={ row[ 'id' ] || `${ column.id }-${ idx }` }>{ column.accessor(row) }</Table.Cell>
+                  return <Table.Cell key={ `${ column.id }-${ row.id }` }>{ column.accessor(row) }</Table.Cell>
                 })
               }
             </Table.Row>
