@@ -37,8 +37,8 @@ jobs:
       working-directory: frontend
     - name: "[BACKEND]"
       uses: goreleaser/goreleaser-action@v2
-      workdir: backend
       with:
+        workdir: backend
         version: latest
         args: release --rm-dist
       env:
