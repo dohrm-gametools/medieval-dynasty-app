@@ -1,0 +1,39 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+    # you may remove this if you don't need go generate
+    - go generate ./...
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -a -installsuffix cgo -s -w -X github.com/dohrm-gametools/medieval-dynasty-app/cmd.Version={{.ProjectName}} -X github.com/dohrm-gametools/medieval-dynasty-app/cmd.Revision={{.ShortCommit}} -X github.com/dohrm-gametools/medieval-dynasty-app/cmd.Time={{.Date}}
+archives: [ ]
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+dockers:
+  - image_templates:
+      - "docker.pkg.github.com/dohrm-gametools/medieval-dynasty-app/medieval-dynasty-app-backend:latest"
+      - "docker.pkg.github.com/dohrm-gametools/medieval-dynasty-app/medieval-dynasty-app-backend:{{ .Tag }}"
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/amd64"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
