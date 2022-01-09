@@ -5,7 +5,7 @@ FROM scratch
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY medieval-dynasty-app /medieval-dynasty-app
-COPY ../../../frontend/dist/ /local/spa
+COPY frontend /local/spa
 ENV SPA_DIR=/local/spa
 
 EXPOSE 8080

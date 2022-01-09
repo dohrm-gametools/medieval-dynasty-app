@@ -33,9 +33,11 @@ jobs:
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | \
         docker login docker.pkg.github.com -u docker --password-stdin
-    - name: "[FRONTEND]"
+    - name: "[FRONTEND] - Build"
       run: npm ci && npm run build --if-present
       working-directory: frontend
+    - name: "[FRONTEND] - Copy to backend"
+      run: "mkdir backend/frontend && cp -R frontend/dist/* backend/frontend/"
     - name: "[BACKEND]"
       uses: goreleaser/goreleaser-action@v2
       with:
