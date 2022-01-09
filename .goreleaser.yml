@@ -31,6 +31,8 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--platform=linux/amd64"
+    extra_files:
+      - frontend/dist
 changelog:
   sort: asc
   filters:
