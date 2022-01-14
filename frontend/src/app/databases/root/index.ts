@@ -1,1 +1,1 @@
-export * from './components';
+export { default as DatabasesView } from './views/databases-view';

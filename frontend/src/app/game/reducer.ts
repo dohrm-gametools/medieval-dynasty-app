@@ -1,5 +1,5 @@
 import { ActionReducerMapBuilder, AsyncThunk, CaseReducer, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { State as I18nState } from '~/src/app/i18n';
+import { State as I18nState } from '~/src/lib/i18n';
 import { Building, BuildingKind, BuildingsApi, GameApi, GameDetails, Item, ItemsApi, Production, ProductionsApi, TownBuilding, Worker, } from '~/src/api';
 import * as services from './services';
 import { EnrichedTownBuilding } from './services';
@@ -57,6 +57,7 @@ const initialState: SliceState = {
   listLoaded: false,
   loading: false,
   game: {
+    id: '',
     buildings: [],
     workers: [],
   },

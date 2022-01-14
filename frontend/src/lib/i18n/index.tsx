@@ -1,24 +1,24 @@
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { actions, State, load } from './reducer';
-import { Dimmer, Loader } from 'semantic-ui-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions, I18nMap, load, State } from './reducer';
 
-export { actions, State, reduxKey, default as reducer, ReducerState } from './reducer';
+export { actions, State, reduxKey, default as reducer, ReducerState, I18nMap } from './reducer';
 
-export const I18nLoader: React.ComponentType = ({ children }) => {
+export const I18nLoader: React.ComponentType<{
+  baseI18n: I18nMap,
+  asyncI18nLoader: () => Promise<I18nMap>,
+  LoaderComponent?: React.ComponentType,
+}> = ({ baseI18n, asyncI18nLoader, LoaderComponent, children }) => {
   const dispatch = useDispatch();
   const loaded = useSelector((state: State) => state.i18n.loaded);
   React.useEffect(() => {
     if (!loaded) {
-      dispatch(load())
+      dispatch(load({ baseI18n, asyncI18nLoader }))
     }
   }, [ loaded ])
   return (
     <>
-      <Dimmer active={ !loaded }>
-        <Loader content="Loading"/>
-      </Dimmer>
-      { loaded ? <>{ children }</> : null }
+      { loaded ? <>{ children }</> : (LoaderComponent ? <LoaderComponent/> : null) }
     </>
   )
 }

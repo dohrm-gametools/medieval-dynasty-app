@@ -1,24 +1,15 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Dropdown, Table } from 'semantic-ui-react';
+import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { ColumnDef, createColumnDef, generateSortFunction, Table } from '~/src/lib/table';
 import { Building, BuildingCreationId, Production, TownBuilding } from '~/src/api';
-import { ColumnType, mapColumn, SortType } from '~/src/app/game/views/utils';
-import { useI18n } from '~/src/app/i18n';
+import { useI18n } from '~/src/lib/i18n';
+import { SearchableMenu } from '~/src/lib/searchable-menu';
 import { default as BuildingForm } from '../components/building-form'
 import { deleteBuilding, getProductionLevel, saveBuilding, selectors } from '../reducer';
 import { EnrichedGame, EnrichedTownBuilding } from '../services';
 import { Kind } from '~/src/api/buildings';
 
-
-const columns: Array<ColumnType> = [
-  { id: 'category', width: '1' },
-  { id: '', width: '1' },
-  { id: 'name', width: '4' },
-  { id: 'productionLevel', width: '2' },
-  { id: 'workers', width: '2' },
-  { id: 'productionRate', width: '2' },
-  { id: 'tax', width: '2' },
-];
 
 function createDraft(buildingId: string): TownBuilding {
   return {
@@ -30,6 +21,14 @@ function createDraft(buildingId: string): TownBuilding {
 }
 
 type BuildingByCategory = { category: string, buildings: Array<EnrichedTownBuilding> };
+
+const ButtonActions: React.ComponentType<{ building: TownBuilding, onEdit: (w: TownBuilding) => any, onRemove: (w: TownBuilding) => any }> =
+  ({ building, onEdit, onRemove }) => (
+    <ButtonGroup>
+      <Button variant="light" onClick={ () => onEdit(building) }><i className="bi bi-pencil-square" aria-hidden="true"/></Button>
+      <Button variant="light" onClick={ () => onRemove(building) }><i className="bi bi-trash" aria-hidden="true"/></Button>
+    </ButtonGroup>
+  );
 
 const BuildingsTable: React.ComponentType<{
   game: EnrichedGame,
@@ -46,7 +45,7 @@ const BuildingsTable: React.ComponentType<{
     const dispatch = useDispatch();
     const { t } = useI18n();
     const [ selected, setSelected ] = React.useState<TownBuilding | undefined>()
-    const [ sort, setSort ] = React.useState<SortType>(undefined);
+    const [ sort, setSort ] = React.useState<string>('');
 
     const onEdit = (b: TownBuilding) => {
       setSelected(b);
@@ -61,6 +60,19 @@ const BuildingsTable: React.ComponentType<{
       dispatch(saveBuilding({ id: game.id, building: newBuilding }));
       setSelected(undefined);
     }
+
+    const columns: Array<ColumnDef<EnrichedTownBuilding>> = [
+      createColumnDef('', 1, 'app.game.building', t, false, c => <ButtonActions building={ c } onRemove={ onRemove } onEdit={ onEdit }/>),
+      createColumnDef('category', 1, 'app.game.building', t, true, c => t(`app.buildings.category.${ c.raw.category }`)),
+      createColumnDef('name', 1, 'app.game.building', t, true, c => t(`db.buildings.${ c.buildingId }`)),
+      createColumnDef('productionLevel', 1, 'app.game.building', t, true, c => getProductionLevel(c.raw, c.assignedWorker, game) || ''),
+      createColumnDef('workers', 1, 'app.game.building', t, true, b => `${ b.assignedWorker.length } / ${ (b.raw.category === Kind.House ? b.raw.capacity : b.raw.worker) || 0 }`),
+      createColumnDef('productionRate', 1, 'app.game.building', t, true, b => b.productions.reduce((acc, c) => acc + c.percentage, 0)),
+      createColumnDef('tax', 1, 'app.game.building', t, true, c => c.tax),
+    ];
+
+    const sortFunction = generateSortFunction(sort, columns);
+
     const buildingOptions = Object.keys(rawBuildings).reduce<{ [ category: string ]: Array<{ text: string, value: string }> }>((acc, c) => {
       const current = rawBuildings[ c ];
       const category = current.category.valueOf();
@@ -77,56 +89,26 @@ const BuildingsTable: React.ComponentType<{
 
     return (
       <>
-        <Table celled>
-          <Table.Header>
-            <Table.Row>{ columns.map(v => mapColumn(v, 'app.game.building', t, sort, setSort)) }</Table.Row>
-          </Table.Header>
-          <Table.Body>
-            { buildings.map(c => {
-              return c.buildings.map((building, idx) => {
-                return (
-                  <Table.Row key={ building.id }>
-                    { idx === 0 ? <Table.Cell rowSpan={ c.buildings.length + '' }>{ t(`app.buildings.category.${ c.category }`) }</Table.Cell> : null }
-                    <Table.Cell>
-                      <Button.Group>
-                        <Button icon="edit" onClick={ () => onEdit(building) }/>
-                        <Button icon="trash" onClick={ () => onRemove(building) }/>
-                      </Button.Group>
-                    </Table.Cell>
-                    <Table.Cell>{ t(`db.buildings.${ building.buildingId }`) }</Table.Cell>
-                    <Table.Cell>{ getProductionLevel(building.raw, building.assignedWorker, game) || '' }</Table.Cell>
-                    <Table.Cell>{ `${ building.assignedWorker.length } / ${ (c.category === Kind.House ? building.raw.capacity : building.raw.worker) || 0 }` }</Table.Cell>
-                    <Table.Cell>{ building.productions.reduce((acc, c) => acc + c.percentage, 0) }</Table.Cell>
-                    <Table.Cell>{ building.tax }</Table.Cell>
-                  </Table.Row>
-                )
-
-              })
-            }) }
-          </Table.Body>
-        </Table>
-        <Dropdown
-          icon="add"
-          button
-          floating
-          scrolling
-          className="icon"
-        >
-          <Dropdown.Menu>
-            { Object.keys(buildingOptions).map(category => (
-              <>
-                <Dropdown.Header key={ `header.${ category }` }>{ t(`app.buildings.category.${ category }`) }</Dropdown.Header>
-                <Dropdown.Divider key={ `divider.${ category }` }/>
-                {
-                  buildingOptions[ category ].map(b => (
-                    <Dropdown.Item key={ b.value } { ...b } onClick={ (e, { value }) => onAdd(value) }/>
-                  ))
-                }
-              </>
-            )) }
+        <Table
+          classNames="table striped hover bordered"
+          columns={ columns }
+          data={ [ ...game.buildings ].sort(sortFunction) }
+          sort={ sort }
+          changeSort={ setSort }
+        />
+        <Dropdown as={ ButtonGroup }>
+          <Dropdown.Toggle variant="outline-dark" size="sm" id="building-select-construct">
+            <i className="bi bi-plus-circle" aria-hidden="true"/> Add
+          </Dropdown.Toggle>
+          <Dropdown.Menu as={ SearchableMenu }>
+            { Object.keys(buildingOptions).reduce<Array<React.ReactNode>>((acc, category) => ([
+              ...acc,
+              <Dropdown.Header key={ `header.${ category }` }>{ t(`app.buildings.category.${ category }`) }</Dropdown.Header>,
+              ...buildingOptions[ category ].map(b => (
+                <Dropdown.Item key={ `value.${ b.value }` } onClick={ () => onAdd(b.value) }>{ b.text }</Dropdown.Item>))
+            ]), []) }
           </Dropdown.Menu>
         </Dropdown>
-
         { selected ? <BuildingForm
           building={ { ...selected } }
           productions={ productions.slice() }

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { default as BaseListView, Column } from '../../base/views/list-view'
 import { changeParams, fetch, reduxKey, selectors, reset } from '~/src/app/databases/buildings/reducer';
 import { Building } from '~/src/api';
-import { useI18n } from '~/src/app/i18n';
+import { useI18n } from '~/src/lib/i18n';
 
 const columnsFactory = (t: (key: string) => string, lang: string): Array<Column<Building>> => [
   { id: 'category', header: t('app.database.buildings.table.headers.category'), accessor: d => t(`app.buildings.category.${ d.category.valueOf() }`) },

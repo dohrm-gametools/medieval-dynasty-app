@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { selectors } from '~/src/app/game/reducer';
 import { Card, List, Table } from 'semantic-ui-react';
-import { useI18n } from '~/src/app/i18n';
+import { useI18n } from '~/src/lib/i18n';
 
 
 const SummaryComponent: React.ComponentType = () => {

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Dimmer, Loader } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 import { AsyncThunkAction } from '@reduxjs/toolkit';
+import { useSearchParams } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import { Loader } from '~/src/lib/loader';
+import { ColumnDef as Column, Table } from '~/src/lib/table';
+import { Pagination } from '~/src/lib/pagination';
 import { ChangeParamsPayload, ReducerState } from '../reducer';
-import { Column, default as TableComponent } from '../components/table-component';
-import { default as PaginationComponent } from '../components/pagination-component';
 
 export { Column };
 
@@ -46,20 +47,20 @@ const ListComponent: React.ComponentType<{
       dispatch(changeParams({ sort: sort as any, page, pageSize: pageSizeV }));
     }
     return (
-      <>
-        <TableComponent
-          data={ itemsV }
-          columns={ columns }
-          sort={ sortV }
-          changeSort={ newSort => updateParams(newSort, pageV) }
-        />
-        <PaginationComponent
-          pageSize={ pageSizeV }
-          page={ pageV }
-          total={ totalCountV }
-          changePage={ newPage => updateParams(sortV, newPage) }
-        />
-      </>
+      <Table
+        classNames="table striped hover bordered"
+        columns={ columns }
+        data={ itemsV }
+        sort={ sortV }
+        changeSort={ newSort => updateParams(newSort, pageV) }
+        footer={
+          <Pagination
+            pageSize={ pageSizeV }
+            page={ pageV }
+            total={ totalCountV }
+            changePage={ newPage => updateParams(sortV, newPage) }
+          />
+        }/>
     )
   }
 
@@ -97,12 +98,9 @@ const ListView: React.ComponentType<Props> =
       }
     }, [ loaded ]);
     return (
-      <>
-        <Dimmer active={ !loaded }>
-          <Loader content="Loading"/>
-        </Dimmer>
-        { loaded ? <ListComponent queryChanged={ queryChanged } changeParams={ changeParams } { ...others }/> : null }
-      </>
+      <Loader loaded={ loaded }>
+        <ListComponent queryChanged={ queryChanged } changeParams={ changeParams } { ...others }/>
+      </Loader>
     )
   };
 

@@ -1,83 +1,47 @@
 import * as React from 'react';
-import { Dimmer, Grid, Loader, Menu } from 'semantic-ui-react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { Container, Row, Col, Collapse } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dispatch } from 'redux';
-import { useI18n } from '~/src/app/i18n';
-import { GameDetails } from '~/src/api';
+import { SectionPageView } from '~/src/lib/app-layout';
+import { Loader } from '~/src/lib/loader';
 import { cleanup, list, selectors } from '../reducer';
 import { default as SummaryView } from '../components/summary-view';
 
 
-interface GameViewProps {
-  rootPath: string;
-  listLoaded: boolean;
-  loading: boolean;
-  game: GameDetails;
-  dispatch: Dispatch<any>;
-  pathname: string;
-  t: (key: string) => string;
+const GameView: React.ComponentType = () => {
+  const listLoaded = useSelector(selectors.listLoaded);
+  const loading = useSelector(selectors.loading);
+  return (
+    <Loader loaded={ listLoaded }>
+      <Row className="flex-md-column flex-lg-row">
+        <Col className="col-lg-8 col-md-12">
+          <Outlet/>
+        </Col>
+        <Col>
+          Summary here
+          {/*<SummaryView/>*/ }
+        </Col>
+      </Row>
+    </Loader>
+  )
+};
+
+const PageView: React.ComponentType<{ rootPath: string }> = ({ rootPath }) => {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(list());
+    return () => {
+      dispatch(cleanup());
+    };
+  })
+  return (
+    <SectionPageView secondaryNavigation={ [
+      { key: 'app.game.tabs.workers', path: `${ rootPath }/workers` },
+      { key: 'app.game.tabs.buildings', path: `${ rootPath }/buildings` },
+    ] }>
+      <GameView/>
+    </SectionPageView>
+  );
 }
 
-class GameView extends React.Component<GameViewProps, {}> {
-  componentDidMount() {
-    this.props.dispatch(list());
-  }
-  componentWillUnmount() {
-    this.props.dispatch(cleanup());
-  }
-
-  render() {
-    const { t, listLoaded, loading, rootPath, pathname } = this.props;
-    return (
-      <>
-        <Dimmer active={ !listLoaded || loading }>
-          <Loader content="Loading"/>
-        </Dimmer>
-        <Grid.Column width="3">
-          <Menu vertical fluid tabular>
-            <Menu.Item
-              name={ t('app.game.tabs.workers') }
-              as={ Link }
-              active={ pathname === `${ rootPath }/workers` }
-              to={ `${ rootPath }/workers` }
-            />
-            <Menu.Item
-              name={ t('app.game.tabs.buildings') }
-              as={ Link }
-              active={ pathname === `${ rootPath }/buildings` }
-              to={ `${ rootPath }/buildings` }
-            />
-          </Menu>
-        </Grid.Column>
-        <Grid.Column width="10">
-          { listLoaded ? <Outlet/> : null }
-        </Grid.Column>
-        <Grid.Column width="3">
-          <SummaryView/>
-        </Grid.Column>
-      </>
-    );
-  }
-}
-
-function withAttributes(Component: React.ComponentType<GameViewProps>): React.ComponentType<{ rootPath: string }> {
-  return function ({ rootPath }) {
-    const { t } = useI18n();
-    const location = useLocation();
-    const dispatch = useDispatch();
-    const listLoaded = useSelector(selectors.listLoaded);
-    const loading = useSelector(selectors.loading);
-    const game = useSelector(selectors.game);
-
-    return <Component t={ t }
-                      rootPath={ rootPath }
-                      listLoaded={ listLoaded }
-                      loading={ loading }
-                      game={ game }
-                      pathname={ location.pathname }
-                      dispatch={ dispatch }/>
-  }
-}
-
-export default withAttributes(GameView);
+export default PageView;

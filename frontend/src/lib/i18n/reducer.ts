@@ -1,11 +1,19 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { I18nApi } from '~/src/api';
-import { default as fr } from './fr';
-import { default as en } from './en';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const translations: { [ lang: string ]: { [ key: string ]: string } } = { fr, en };
+export type I18nMap = { [ lang: string ]: { [ key: string ]: string } };
 
-const load = createAsyncThunk('i18n/load', () => I18nApi.load())
+const load = createAsyncThunk('i18n/load', (payload: { baseI18n: I18nMap, asyncI18nLoader?: () => Promise<I18nMap> }) => {
+  if (!payload.asyncI18nLoader) {
+    return Promise.resolve(payload.baseI18n);
+  }
+  return payload.asyncI18nLoader()
+    .then(result => {
+      return Object.keys(result).reduce((acc, c) => {
+        return { ...acc, [ c ]: { ...(acc[ c ] || {}), ...result[ c ] } };
+      }, payload.baseI18n);
+    })
+    .catch(_ => payload.baseI18n);
+})
 
 export interface ReducerState {
   loaded: boolean;
@@ -20,7 +28,7 @@ const initialState: ReducerState = {
   lang: 'fr', // TODO Read locale storage to retrieve this information & accept-header
   supportedLanguages: [ 'fr', 'en' ],
   asyncTranslations: {},
-  translations: fr,
+  translations: {},
 }
 
 const slice = createSlice({
@@ -30,7 +38,7 @@ const slice = createSlice({
     setSelectedLang(state, action: PayloadAction<string>) {
       if (state.supportedLanguages.includes(action.payload)) {
         state.lang = action.payload;
-        state.translations = { ...(translations[ action.payload ] || {}), ...(state.asyncTranslations[ action.payload ] || {}) };
+        state.translations = { ...(state.asyncTranslations[ action.payload ] || {}) };
       }
     }
   },

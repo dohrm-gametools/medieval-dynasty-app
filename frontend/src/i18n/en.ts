@@ -61,6 +61,8 @@ const en = {
   // Productions
   'app.database.productions.table.headers.name': 'Produced object',
   'app.database.productions.table.headers.recipe': 'Recipe',
+  'app.database.productions.table.headers.durability': 'Durability',
+  'app.database.productions.table.headers.other': 'Also produced',
   'app.database.productions.table.headers.producedIn': 'Produced in',
   // Games
   'app.game.tabs.buildings': 'Buildings',

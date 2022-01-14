@@ -1,0 +1,96 @@
+.sortable:hover {
+    cursor: pointer;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+    margin: auto;
+    overflow: auto;
+    height: 100%;
+}
+
+.container table {
+    width: 100%;
+    margin: auto;
+}
+
+
+.container thead th {
+    position: sticky;
+    top: 0;
+    background: #FFF;
+    z-index: 1;
+}
+
+
+.container tfoot,
+.container tfoot th,
+.container tfoot td {
+    position: sticky;
+    bottom: 0;
+    background: #FFF;
+    z-index: 4;
+}
+
+
+.container table th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+
+
+.container thead th:first-child,
+.container tfoot th:first-child {
+    z-index: 5;
+}
+
+.container table:global(.bordered) > thead th:before,
+.container table:global(.bordered) > thead th:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.container table:global(.bordered) > thead th:before {
+    top: -1px;
+    border-top: 1px solid currentColor;
+}
+
+.container table:global(.bordered) > thead th:after {
+    bottom: -1px;
+    border-bottom: 1px solid currentColor;
+}
+
+.container table:global(.bordered) > :not(:first-child) {
+    border-top: none;
+}
+
+.container table:global(.bordered) > thead > tr {
+    /*border-bottom: 2px solid currentColor;*/
+}
+
+
+.container table:global(.bordered) > tfoot th:before,
+.container table:global(.bordered) > tfoot th:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.container table:global(.bordered) > tfoot th:before {
+    top: -1px;
+    border-top: 1px solid currentColor;
+}
+
+.container table:global(.bordered) > tfoot th:after {
+    /*bottom: -1px;*/
+    /*border-bottom: 1px solid currentColor;*/
+}
+
+
+

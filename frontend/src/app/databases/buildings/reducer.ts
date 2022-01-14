@@ -1,4 +1,4 @@
-import { State as I18nState } from '~/src/app/i18n';
+import { State as I18nState } from '~/src/lib/i18n';
 import { Building, BuildingsApi } from '~/src/api';
 
 import { initReducer, ReducerState as BaseReducerState, defaultPaginateFunction } from '../base/reducer';

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { default as BaseListView, Column } from '../../base/views/list-view'
 import { changeParams, fetch, reduxKey, selectors, reset } from '../reducer';
-import { useI18n } from '~/src/app/i18n';
+import { useI18n } from '~/src/lib/i18n';
 import { Item } from '~/src/api';
 
 

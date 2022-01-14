@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ReducerState as I18nReducerState, reduxKey as i18nKey } from '~/src/app/i18n';
+import { ReducerState as I18nReducerState, reduxKey as i18nKey } from '~/src/lib/i18n';
 import { paginate } from '~/src/utils';
 
 

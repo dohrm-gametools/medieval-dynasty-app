@@ -70,6 +70,8 @@ const fr: { [ key: string ]: string } = {
   // Productions
   'app.database.productions.table.headers.name': 'Objet produit',
   'app.database.productions.table.headers.recipe': 'Ingredients',
+  'app.database.productions.table.headers.durability': 'Durabilité',
+  'app.database.productions.table.headers.other': 'Produit également',
   'app.database.productions.table.headers.producedIn': 'Produit dans',
   // Games
   'app.game.tabs.workers': 'Travailleurs',

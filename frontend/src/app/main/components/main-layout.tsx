@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Stack } from '@fluentui/react';
 import { Dropdown, Grid, Menu } from 'semantic-ui-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { useI18n } from '~/src/app/i18n';
+import { useI18n } from '~/src/lib/i18n';
 
 
 export interface Props {
-  routes: Array<{ key: string, path: string }>;
+  routes: Array<{ key: string, path: string, protected?: boolean }>;
 }
 
 export const MainLayout: React.ComponentType<Props> = ({ routes }) => {

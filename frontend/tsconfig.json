@@ -34,7 +34,12 @@
     /* allow import React instead of import * as React */
     "allowSyntheticDefaultImports": true,
     /*  Emit interop between CommonJS and ES modules */
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ]
   },
   "include": [
     "src/**/*"
