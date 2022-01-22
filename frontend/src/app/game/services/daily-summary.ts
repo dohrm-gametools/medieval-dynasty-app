@@ -103,18 +103,18 @@ export function dailySummary(
   result.productions.forEach(item => {
     const maybeItem = rawItems.find(t => t.id === item.id);
     if (maybeItem && maybeItem.wood) {
-      result.others.wood.produced += rounded(maybeItem.wood * item.balance);
+      result.others.wood.produced += maybeItem.wood * item.balance;
     }
     if (maybeItem && maybeItem.water) {
-      result.others.water.produced += rounded(maybeItem.water * item.balance);
+      result.others.water.produced += maybeItem.water * item.balance;
     }
     if (maybeItem && maybeItem.food) {
-      result.others.food.produced += rounded(maybeItem.food * item.balance);
+      result.others.food.produced += maybeItem.food * item.balance;
     }
   });
-  result.others.wood.balance = rounded(result.others.wood.produced - result.others.wood.consumed);
-  result.others.food.balance = rounded(result.others.food.produced - result.others.food.consumed);
-  result.others.water.balance = rounded(result.others.water.produced - result.others.water.consumed);
+  result.others.wood = computeSummaryRow(result.others.wood, 'wood');
+  result.others.food = computeSummaryRow(result.others.food, 'food');
+  result.others.water = computeSummaryRow(result.others.water, 'water');
 
   return result
 }

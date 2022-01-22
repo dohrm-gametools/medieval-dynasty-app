@@ -17,9 +17,9 @@ const fr: { [ key: string ]: string } = {
   'menu.game.title': 'Gestion de partie',
   'menu.languages.title': 'Langue',
   // Buildings database
-  'app.database.menu.items.title': 'Objects',
-  'app.database.menu.buildings.title': 'Batiments',
-  'app.database.menu.productions.title': 'Productions',
+  'app.database.tabs.items': 'Objects',
+  'app.database.tabs.buildings': 'Batiments',
+  'app.database.tabs.productions': 'Productions',
   'app.database.buildings.table.headers.category': 'Categorie',
   'app.database.buildings.table.headers.name': 'Nom',
   'app.database.buildings.table.headers.tax': 'Valeur de taxe',

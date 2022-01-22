@@ -2,10 +2,8 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AsyncThunkAction } from '@reduxjs/toolkit';
 import { useSearchParams } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
 import { Loader } from '~/src/lib/loader';
 import { ColumnDef as Column, Table } from '~/src/lib/table';
-import { Pagination } from '~/src/lib/pagination';
 import { ChangeParamsPayload, ReducerState } from '../reducer';
 
 export { Column };
@@ -23,10 +21,9 @@ export interface Props {
   fetch(): AsyncThunkAction<Array<any>, void, {}>;
 }
 
-const ListComponent: React.ComponentType<{
-  queryChanged: (page: number, sort: string) => any;
-} & Omit<Props, 'reduxKey' | 'fetch' | 'reset'>> =
+const ListComponent: React.ComponentType<{ queryChanged: (page: number, sort: string, pageSize: number) => any; } & Omit<Props, 'fetch' | 'reset'>> =
   ({
+     reduxKey,
      queryChanged,
      columns,
      paginatedItems,
@@ -42,25 +39,23 @@ const ListComponent: React.ComponentType<{
     const pageV = useSelector(page);
     const pageSizeV = useSelector(pageSize);
     const totalCountV = useSelector(totalCount);
-    const updateParams = (sort: string, page: number) => {
-      queryChanged(page, sort);
-      dispatch(changeParams({ sort: sort as any, page, pageSize: pageSizeV }));
+    const updateParams = (sort: string, page: number, pageSize: number) => {
+      queryChanged(page, sort, pageSize);
+      dispatch(changeParams({ sort: sort as any, page, pageSize }));
     }
     return (
       <Table
-        classNames="table striped hover bordered"
+        tableId={ reduxKey }
         columns={ columns }
         data={ itemsV }
         sort={ sortV }
-        changeSort={ newSort => updateParams(newSort, pageV) }
-        footer={
-          <Pagination
-            pageSize={ pageSizeV }
-            page={ pageV }
-            total={ totalCountV }
-            changePage={ newPage => updateParams(sortV, newPage) }
-          />
-        }/>
+        totalCount={ totalCountV }
+        pageSize={ pageSizeV }
+        page={ pageV }
+        changeSort={ newSort => updateParams(newSort, pageV, pageSizeV) }
+        changePage={ newPage => updateParams(sortV, newPage, pageSizeV) }
+        changePageSize={ newPageSize => updateParams(sortV, pageV, newPageSize) }
+      />
     )
   }
 
@@ -78,28 +73,26 @@ const ListView: React.ComponentType<Props> =
     const loaded = useSelector((state: any) => (state[ reduxKey ] as ReducerState<any>).loaded);
     const sort = searchParams.get('sort');
     const page = searchParams.get('page');
+    const pageSize = searchParams.get('pageSize');
     const sortInStore = useSelector(others.sort);
     const pageInStore = useSelector(others.page);
+    const pageSizeInStore = useSelector(others.pageSize);
     // Do binding with router.
-    const queryChanged = (page: number, sort: string) => {
-      setSearchParams({ page: (page + 1).toString(), sort: sort })
+    const queryChanged = (page: number, sort: string, pageSize: number) => {
+      setSearchParams({ page: (page + 1).toString(), sort: sort, pageSize: pageSize.toString() })
     }
     React.useEffect(() => {
       if (!loaded) {
         dispatch(fetch());
-        dispatch(changeParams({
-          page: page && parseInt(page) - 1 || 0,
-          sort: sort || '' as any,
-          pageSize: 20,
-        }));
+        dispatch(changeParams({ page: page && parseInt(page) - 1 || 0, sort: sort || '' as any, pageSize: pageSize && parseInt(pageSize) || 25, }));
       } else {
         // Initialize the route in case of the page already loaded in the past :)
-        queryChanged(pageInStore, sortInStore);
+        queryChanged(pageInStore, sortInStore, pageSizeInStore);
       }
     }, [ loaded ]);
     return (
       <Loader loaded={ loaded }>
-        <ListComponent queryChanged={ queryChanged } changeParams={ changeParams } { ...others }/>
+        <ListComponent queryChanged={ queryChanged } changeParams={ changeParams } reduxKey={ reduxKey } { ...others }/>
       </Loader>
     )
   };

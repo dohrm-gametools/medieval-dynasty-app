@@ -53,7 +53,7 @@ export function getEnrichedGame(game: GameDetails, rawBuildings: Array<Building>
   const taxModifier = townLevel * 0.125;
   return {
     id: game.id,
-    workers: game.workers.map(w => mapWorker(w, game, rawBuildings)),
+    workers: game.workers.map(w => mapWorker(w, game, rawBuildings)).sort((a, b) => a.name.toLowerCase() === b.name.toLowerCase() ? 0 : (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1)),
     buildings: game.buildings.reduce<Array<EnrichedTownBuilding>>((acc, b) => {
       const item = mapBuilding(b, rawBuildings, taxModifier);
       if (item) {

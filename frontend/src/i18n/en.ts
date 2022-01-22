@@ -8,9 +8,9 @@ const en = {
   'menu.game.title': 'Game management',
   'menu.languages.title': 'Language',
   // Buildings database
-  'app.database.menu.items.title': 'Items',
-  'app.database.menu.buildings.title': 'Buildings',
-  'app.database.menu.productions.title': 'Productions',
+  'app.database.tabs.items': 'Items',
+  'app.database.tabs.buildings': 'Buildings',
+  'app.database.tabs.productions': 'Productions',
   'app.database.buildings.table.headers.category': 'Category',
   'app.database.buildings.table.headers.name': 'Name',
   'app.database.buildings.table.headers.tax': 'Tax value',

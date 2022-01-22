@@ -1,32 +1,36 @@
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Container, Row, Col, Collapse } from 'react-bootstrap';
+import { Box, Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { SectionPageView } from '~/src/lib/app-layout';
 import { Loader } from '~/src/lib/loader';
-import { cleanup, list, selectors } from '../reducer';
 import { default as SummaryView } from '../components/summary-view';
+import { cleanup, list, selectors } from '../reducer';
 
 
 const GameView: React.ComponentType = () => {
   const listLoaded = useSelector(selectors.listLoaded);
-  const loading = useSelector(selectors.loading);
   return (
     <Loader loaded={ listLoaded }>
-      <Row className="flex-md-column flex-lg-row">
-        <Col className="col-lg-8 col-md-12">
-          <Outlet/>
-        </Col>
-        <Col>
-          Summary here
-          {/*<SummaryView/>*/ }
-        </Col>
-      </Row>
+      <Box sx={ {
+        flexGrow: 1,
+        height: '100%',
+        width: '100%',
+      } }>
+        <Grid height="100%" container spacing={ 2 }>
+          <Grid style={ { height: '100%', minHeight: '300px' } } item xs={ 12 } sm={ 12 } md={ 9 }>
+            <Outlet/>
+          </Grid>
+          <Grid item xs={ 12 } sm={ 12 } md={ 3 }>
+            <SummaryView/>
+          </Grid>
+        </Grid>
+      </Box>
     </Loader>
   )
 };
 
-const PageView: React.ComponentType<{ rootPath: string }> = ({ rootPath }) => {
+const PageView: React.ComponentType = () => {
   const dispatch = useDispatch();
   React.useEffect(() => {
     dispatch(list());
@@ -35,10 +39,7 @@ const PageView: React.ComponentType<{ rootPath: string }> = ({ rootPath }) => {
     };
   })
   return (
-    <SectionPageView secondaryNavigation={ [
-      { key: 'app.game.tabs.workers', path: `${ rootPath }/workers` },
-      { key: 'app.game.tabs.buildings', path: `${ rootPath }/buildings` },
-    ] }>
+    <SectionPageView>
       <GameView/>
     </SectionPageView>
   );

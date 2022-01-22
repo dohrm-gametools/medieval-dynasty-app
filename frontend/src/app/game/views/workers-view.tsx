@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ButtonGroup, Button, Stack, Dropdown } from 'react-bootstrap';
-import { ColumnDef, Table, createColumnDef, generateSortFunction } from '~/src/lib/table';
+import { Button, ButtonGroup, IconButton } from '@mui/material';
+import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { ColumnDef, createColumnDef, generateSortFunction, Table } from '~/src/lib/table';
 import { useI18n } from '~/src/lib/i18n';
 import { Worker, WorkerCreationId } from '~/src/api';
 import { deleteWorker, saveWorker, selectors } from '../reducer';
 import { default as WorkerForm } from '../components/worker-form';
-import { SearchableMenu } from '~/src/lib/searchable-menu';
+import { GameIcon } from '~/src/app/main/components/game-icon';
 
 function createDraft(): Worker {
   return {
@@ -27,12 +28,13 @@ function createDraft(): Worker {
 
 const prefix = 'app.game.worker';
 
-const ButtonActions: React.ComponentType<{ worker: Worker, onEdit: (w: Worker) => any, onRemove: (w: Worker) => any }> = ({ worker, onEdit, onRemove }) => (
-  <ButtonGroup>
-    <Button variant="light" onClick={ () => onEdit(worker) }><i className="bi bi-pencil-square" aria-hidden="true"/></Button>
-    <Button variant="light" onClick={ () => onRemove(worker) }><i className="bi bi-trash" aria-hidden="true"/></Button>
-  </ButtonGroup>
-)
+const ButtonActions: React.ComponentType<{ worker: Worker, onEdit: (w: Worker) => any, onRemove: (w: Worker) => any }> =
+  ({ worker, onEdit, onRemove }) => (
+    <ButtonGroup>
+      <IconButton aria-label="edit" onClick={ () => onEdit(worker) }><EditIcon/></IconButton>
+      <IconButton aria-label="delete" onClick={ () => onRemove(worker) }><DeleteIcon/></IconButton>
+    </ButtonGroup>
+  );
 
 const WorkersView: React.ComponentType = () => {
   const dispatch = useDispatch()
@@ -59,62 +61,64 @@ const WorkersView: React.ComponentType = () => {
   }
 
   const columns: Array<ColumnDef<Worker>> = [
-    createColumnDef('', 5, prefix, t, false, w => <ButtonActions worker={ w } onEdit={ onEdit } onRemove={ onRemove }/>),
-    createColumnDef('name', 20, prefix, t, true),
-    createColumnDef('age', 10, prefix, t, true),
-    createColumnDef('sex', 10, prefix, t, true, w => t(`app.game.worker.sex.${ w.sex }`)),
-    createColumnDef('extraction', 10, prefix, t, true, w => w.skills.extraction),
-    createColumnDef('hunting', 10, prefix, t, true, w => w.skills.hunting),
-    createColumnDef('farming', 10, prefix, t, true, w => w.skills.farming),
-    createColumnDef('diplomacy', 10, prefix, t, true, w => w.skills.diplomacy),
-    createColumnDef('survival', 10, prefix, t, true, w => w.skills.survival),
-    createColumnDef('crafting', 10, prefix, t, true, w => w.skills.crafting),
+    createColumnDef('', 10, prefix, t, { render: w => <ButtonActions worker={ w } onEdit={ onEdit } onRemove={ onRemove }/> }),
+    createColumnDef('name', 62, prefix, t, { sortable: true }),
+    createColumnDef('age', 5, prefix, t, { sortable: true }),
+    createColumnDef('sex', 5, prefix, t, { sortable: true, accessor: w => t(`app.game.worker.sex.${ w.sex }`) }),
+    createColumnDef('extraction', 3, prefix, t,
+      {
+        renderHeader: () => <GameIcon path="/skills/extraction.png"/>,
+        sortable: true,
+        accessor: w => w.skills.extraction,
+        headerAlign: 'center',
+        align: 'center',
+      }),
+    createColumnDef('hunting', 3, prefix, t,
+      { renderHeader: () => <GameIcon path="/skills/hunting.png"/>, sortable: true, accessor: w => w.skills.hunting, headerAlign: 'center', align: 'center', }),
+    createColumnDef('farming', 3, prefix, t,
+      { renderHeader: () => <GameIcon path="/skills/farming.png"/>, sortable: true, accessor: w => w.skills.farming, headerAlign: 'center', align: 'center', }),
+    createColumnDef('diplomacy', 3, prefix, t,
+      {
+        renderHeader: () => <GameIcon path="/skills/diplomacy.png"/>,
+        sortable: true,
+        accessor: w => w.skills.diplomacy,
+        headerAlign: 'center',
+        align: 'center',
+      }),
+    createColumnDef('survival', 3, prefix, t,
+      {
+        renderHeader: () => <GameIcon path="/skills/survival.png"/>,
+        sortable: true,
+        accessor: w => w.skills.survival,
+        headerAlign: 'center',
+        align: 'center',
+      }),
+    createColumnDef('crafting', 3, prefix, t,
+      {
+        renderHeader: () => <GameIcon path="/skills/production.png"/>,
+        sortable: true,
+        accessor: w => w.skills.crafting,
+        headerAlign: 'center',
+        align: 'center',
+      }),
   ];
 
   const sortFunction = generateSortFunction(sort, columns);
   return (
     <>
-      <Stack gap={ 3 }>
-        <Table
-          classNames="table striped hover bordered"
-          columns={ columns }
-          data={ [ ...game.workers ].sort(sortFunction) }
-          sort={ sort }
-          changeSort={ setSort }
-        />
-        <Dropdown as={ ButtonGroup }>
-          <Dropdown.Toggle variant="outline-dark" size="sm" id="building-select-construct">
-            <i className="bi bi-plus-circle" aria-hidden="true"/> Add
-          </Dropdown.Toggle>
-          <Dropdown.Menu as={ SearchableMenu }>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.1`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.2`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-            <Dropdown.Header key={ `header.1` }>{ t(`app.buildings.category.3`) }</Dropdown.Header>
-          </Dropdown.Menu>
-        </Dropdown>
-        <span>
-          <Button variant="outline-dark" onClick={ onAdd } size="sm">
-            <i className="bi bi-plus-circle" aria-hidden="true"/> Add
+      <Table<Worker>
+        tableId="buildings"
+        totalCount={ game.workers.length }
+        columns={ columns }
+        data={ [ ...game.workers ].sort(sortFunction) }
+        sort={ sort }
+        changeSort={ setSort }
+        toolbar={
+          <Button variant="text" onClick={ onAdd } startIcon={ <AddIcon/> }>
+            Add
           </Button>
-        </span>
-      </Stack>
+        }
+      />
       { selected ? <WorkerForm worker={ selected } onSave={ onSave } cancel={ () => setSelected(undefined) }/> : null }
     </>
   );

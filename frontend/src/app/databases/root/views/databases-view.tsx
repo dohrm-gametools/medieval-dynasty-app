@@ -6,11 +6,9 @@ import { SectionPageView } from '~/src/lib/app-layout';
 const DatabasesView: React.ComponentType = () => (<Outlet/>);
 
 
-const routes = [ 'buildings', 'items', 'productions' ];
-
-const PageView: React.ComponentType<{ rootPath: string }> = ({ rootPath }) => {
+const PageView: React.ComponentType = () => {
   return (
-    <SectionPageView secondaryNavigation={ routes.map(r => ({ path: `${ rootPath }/${ r }`, key: `app.database.menu.${ r }.title` })) }>
+    <SectionPageView>
       <DatabasesView/>
     </SectionPageView>
   );

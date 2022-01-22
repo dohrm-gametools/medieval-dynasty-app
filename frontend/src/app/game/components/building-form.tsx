@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, MenuItem, TextField } from '@mui/material';
 import { Building, Production, TownBuilding, Worker } from '~/src/api';
 import { With18nProps, withI18n } from '~/src/lib/i18n';
 import { Kind } from '~/src/api/buildings';
@@ -11,7 +11,7 @@ const EmptyWorker = '___';
 
 function filterWorkers(allWorkers: Array<Worker>, selected: Array<string>): Array<WorkerOption> {
   return [
-    { key: '', text: '', value: EmptyWorker },
+    { key: '', text: '-', value: EmptyWorker },
     ...allWorkers.map(c => ({
       key: c.id,
       value: c.id,
@@ -39,17 +39,6 @@ function prepareState(state: TownBuilding, building: Building, productions: Arra
       };
     }).slice(),
   };
-}
-
-function splitArray<T>(items: Array<T>, breakpoint: number): Array<Array<{ data: T, originalIdx: number }>> {
-  const nbSection = Math.floor(items.length / breakpoint) + (items.length % breakpoint === 0 ? 0 : 1);
-  const result: Array<Array<{ data: T, originalIdx: number }>> = new Array(nbSection);
-  for (let i = 0; i < items.length; ++i) {
-    const idx = Math.floor(i / breakpoint);
-    if (!result[ idx ]) result[ idx ] = [];
-    result[ idx ].push({ data: items[ i ], originalIdx: i });
-  }
-  return result;
 }
 
 function computeProductionRate(building: TownBuilding): number {
@@ -124,74 +113,59 @@ class BuildingForm extends React.Component<{
     const { t } = this.props;
     const { data: state, availableWorkers, productionRate, baseBuilding, productionsById } = this.state;
     return (
-      <Modal show
-             size="xl"
-             onHide={ this.cancel }
-             backdrop="static"
-             keyboard={ false }>
-        <Modal.Header>
-          <Modal.Title>{ t('app.game.tabs.buildings') } ({ t(`db.buildings.${ baseBuilding.id }`) })</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            { splitArray(state.assignedWorker, 4).map((a, idx) => (
-              <Row key={ `group-worker-${ idx }` }>
-                { a.map(d => (
-                  <Form.Group key={ `worker:${ d.originalIdx }` } as={ Col }>
-                    <Form.Label>{ t('app.game.building.workers') + ` (${ d.originalIdx + 1 }/${ state.assignedWorker.length })` }</Form.Label>
-                    <Form.Select
-                      value={ d.data }
-                      name={ `worker:${ d.originalIdx }` }
-                      onChange={ (e) => this.onChange({ name: e.target.name, value: e.target.value }) }
-                    >
-                      { availableWorkers.map(w => <option key={ `worker:opt:${ d.originalIdx }:${ w.value }` } value={ w.value }>{ w.text }</option>) }
-                    </Form.Select>
-                  </Form.Group>
-                )) }
-              </Row>
+      <Dialog open maxWidth="md" fullWidth aria-labelledby="form-dialog" disableEscapeKeyDown disablePortal>
+        <DialogTitle id="form-dialog">{ t('app.game.tabs.buildings') } ({ t(`db.buildings.${ baseBuilding.id }`) })</DialogTitle>
+        <DialogContent>
+          <DialogContentText>&nbsp;</DialogContentText>
+          <Grid container component="form" spacing={ 2 }>
+            { state.assignedWorker.map((d, idx) => (
+              <Grid item key={ `worker:${ idx }` } xs={ 3 }>
+                <TextField
+                  label={ t('app.game.building.workers') + ` (${ idx + 1 }/${ state.assignedWorker.length })` }
+                  sx={ { width: '100%' } }
+                  name={ `worker:${ idx }` }
+                  value={ d }
+                  select
+                  onChange={ (e) => this.onChange({ name: e.target.name, value: e.target.value }) }
+                >
+                  { availableWorkers.map(w => <MenuItem key={ `worker:opt:${ idx }:${ w.value }` } value={ w.value }>{ w.text }</MenuItem>) }
+                </TextField>
+              </Grid>
             )) }
-            { state.productions.length > 0 ? <h3>{ t(`app.game.building.productions`) } ({ productionRate }%)</h3> : null }
-            {
-              splitArray(state.productions, 2).map((a, idx) => (
-                <Row key={ `group-prod-${ idx }` }>
-                  { a.map(d => {
-                    const prod = productionsById[ d.data.productionId ];
-                    const recipe = prod.costs.map(c => `${ t(`db.items.${ c.id }`) } x ${ c.count }`).join(', ');
-                    return (
-                      <Form.Group key={ `prod-${ d.originalIdx }` }>
-                        <Form.Label>
-                          { `${ t(`db.items.${ prod.itemId }`) }${ prod.stack > 1 ? ` x ${ prod.stack }` : '' }` }
-                          { <span style={ { textOverflow: 'ellipsis', overflow: 'hidden' } }>{ recipe }</span> }
-                        </Form.Label>
-                        <Form.Control
-                          disabled={ prod.producedPerDay <= 0 }
-                          type="number"
-                          min={ 0 }
-                          max={ 100 }
-                          value={ d.data.percentage }
-                          name={ `prod:${ d.originalIdx }` }
-                          onChange={ e => this.onChange({ name: e.target.name, value: e.target.value }) }
-                        />
-                      </Form.Group>
-                    )
-                  }) }
-                </Row>
-              ))
-            }
+            { state.productions.length > 0 ? <Grid item xs={ 12 }><h3>{ t(`app.game.building.productions`) } ({ productionRate }%)</h3></Grid> : null }
+            { state.productions.map((d, idx) => {
+              const prod = productionsById[ d.productionId ];
+              const recipe = prod.costs.map(c => `${ t(`db.items.${ c.id }`) } x ${ c.count }`).join(', ');
+              return (
+                <Grid item key={ `group-prod-${ idx }` } xs={ 6 }>
+                  <TextField
+                    key={ `prod-${ idx }` }
+                    disabled={ prod.producedPerDay <= 0 }
+                    type="number"
+                    value={ d.percentage }
+                    name={ `prod:${ idx }` }
+                    onChange={ (e) => this.onChange({ name: e.target.name, value: e.target.value }) }
+                    sx={ { width: '100%' } }
+                    label={ `${ t(`db.items.${ prod.itemId }`) }${ prod.stack > 1 ? ` x ${ prod.stack }` : '' }` }
+                    helperText={ recipe || ' ' }
+                  />
+                </Grid>
+              )
+            }) }
             {
               productionRate > 100 ? (
-                <Alert variant="danger">
+                <Alert severity="error">
                   { t('app.game.building.validation.percent.content') }
                 </Alert>
               ) : null
             }
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={ this.cancel }>{ t('cancel') }</Button>
-          <Button variant="primary" onClick={ () => this.save(state, productionRate) }>{ t('save') }</Button>
-        </Modal.Footer>
-      </Modal>
+          </Grid>
+          <DialogActions>
+            <Button onClick={ this.cancel }>{ t('cancel') }</Button>
+            <Button onClick={ () => this.save(state, productionRate) } disabled={ productionRate > 100 }>{ t('save') }</Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
     );
   }
 }
