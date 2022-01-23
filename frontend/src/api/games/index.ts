@@ -1,11 +1,3 @@
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-
-
 export interface ProductionWithAssignment {
   productionId: string;
   percentage: number;
@@ -34,8 +26,17 @@ export interface Worker {
   };
 }
 
+export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
+
 export interface GameDetails {
   id: string;
+  season: Season;
+  year: number;
   workers: Array<Worker>;
   buildings: Array<TownBuilding>;
+}
+
+export interface UpdateGameDetails {
+  year?: number;
+  season?: Season;
 }

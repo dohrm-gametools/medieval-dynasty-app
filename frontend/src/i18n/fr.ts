@@ -1,6 +1,7 @@
 const fr: { [ key: string ]: string } = {
   'lang.en': 'Anglais',
   'lang.fr': 'Français',
+  'close': 'Fermer',
   'save': 'Sauvegarder',
   'cancel': 'Annuler',
   'db.tools.axe': 'Hache',
@@ -12,6 +13,10 @@ const fr: { [ key: string ]: string } = {
   'db.tools.scythe': 'Faux',
   'db.tools.pickaxe': 'Pioche',
   'db.tools.shearingScissors': 'Ciseaux de tonte',
+  'db.seasons.spring': 'Printemps',
+  'db.seasons.summer': 'Eté',
+  'db.seasons.autumn': 'Automne',
+  'db.seasons.winter': 'Hiver',
   // Main menu
   'menu.database.title': 'Données',
   'menu.game.title': 'Gestion de partie',
@@ -102,7 +107,11 @@ const fr: { [ key: string ]: string } = {
   'app.game.building.validation.percent.content': 'Il n\'est pas possible d\'attribuer plus de 100% de force de travail',
   // Summary
   'app.game.summary.title': 'Résumé',
+  'app.game.summary.details.title': 'Détails de la partie',
+  'app.game.summary.currentYear.title': 'Année courante',
+  'app.game.summary.season.title': 'Saison',
   'app.game.summary.tax.title': 'Taxes (par saison)',
+  'app.game.summary.consume.title': 'Consomation',
   'app.game.summary.food.title': 'Nourriture (journalier)',
   'app.game.summary.water.title': 'Eau (journalier)',
   'app.game.summary.wood.title': 'Bois (journalier)',

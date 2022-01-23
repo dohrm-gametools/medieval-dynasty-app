@@ -1,7 +1,7 @@
 import * as items from './items';
 import * as buildings from './buildings';
 import * as productions from './productions';
-import { GameDetails, TownBuilding, Worker } from '~/src/api/games';
+import { GameDetails, TownBuilding, Worker, UpdateGameDetails } from './games';
 
 export { Building, Kind as BuildingKind } from './buildings';
 export { Item, Kind as ItemKind } from './items'
@@ -60,7 +60,7 @@ export module GameApi {
     return fetch(`/api/games/${ id }`).then(c => {
       if (c.status === 404) return create();
       return asModel<GameDetails>(c);
-    });
+    }).then(g => ({ ...g, year: g.year || 0, season: g.season || 'spring' })); // Fix missing model attributes
   }
 
   export function create(): Promise<GameDetails> {
@@ -72,6 +72,13 @@ export module GameApi {
 
   export function one(): Promise<GameDetails> {
     return read();
+  }
+
+  export function updateGameDetails(id: string, data: UpdateGameDetails): Promise<GameDetails> {
+    return fetch(`/api/games/${ id }`, {
+      method: 'PUT',
+      body: JSON.stringify({ ...data })
+    }).then(c => asModel<GameDetails>(c));
   }
 
   export function createOrUpdateWorker(id: string, worker: Worker): Promise<GameDetails> {

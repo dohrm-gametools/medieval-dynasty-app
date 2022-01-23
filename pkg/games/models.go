@@ -20,6 +20,15 @@ const (
 	Female = Sex("f")
 )
 
+type Season = string
+
+const (
+	Spring = Season("spring")
+	Summer = Season("summer")
+	Autumn = Season("autumn")
+	Winter = Season("winter")
+)
+
 type Skills struct {
 	Extraction int `json:"extraction" bson:"extraction"`
 	Hunting    int `json:"hunting" bson:"hunting"`
@@ -39,6 +48,8 @@ type Worker struct {
 
 type GameDetails struct {
 	Id        string          `json:"id" bson:"_id"`
+	Year      int             `json:"year" bson:"year"`
+	Season    Season          `json:"season" bson:"season"`
 	Workers   []Worker        `json:"workers" bson:"workers"`
 	Buildings []*TownBuilding `json:"buildings" bson:"buildings"`
 }

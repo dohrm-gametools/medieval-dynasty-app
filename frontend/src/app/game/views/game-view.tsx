@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Drawer } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { SectionPageView } from '~/src/lib/app-layout';
 import { Loader } from '~/src/lib/loader';
-import { default as SummaryView } from '../components/summary-view';
+import SummaryView from './summary-view';
 import { cleanup, list, selectors } from '../reducer';
 
 

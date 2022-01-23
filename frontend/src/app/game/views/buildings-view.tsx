@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IconButton, ButtonGroup, Button } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+import { ButtonGroup, IconButton } from '@mui/material';
+import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { ColumnDef, createColumnDef, generateSortFunction, Table } from '~/src/lib/table';
 import { Building, BuildingCreationId, Production, TownBuilding } from '~/src/api';
 import { useI18n } from '~/src/lib/i18n';
-import { Dropdown, DropdownOption, DropdownOptionGrouped } from '~/src/lib/dropdown';
+import { Dropdown, DropdownOptionGrouped } from '~/src/lib/dropdown';
+import { Kind } from '~/src/api/buildings';
+import SectionPageView from '~/src/lib/app-layout/view/section-page-view';
 import { default as BuildingForm } from '../components/building-form'
 import { deleteBuilding, getProductionLevel, saveBuilding, selectors } from '../reducer';
 import { EnrichedGame, EnrichedTownBuilding } from '../services';
-import { Kind } from '~/src/api/buildings';
 
 
 function createDraft(buildingId: string): TownBuilding {
@@ -130,19 +131,6 @@ const BuildingsTable: React.ComponentType<{
             } }/>
           }
         />
-        { /*<Dropdown as={ ButtonGroup }>
-         <Dropdown.Toggle variant="outline-dark" size="sm" id="building-select-construct">
-         <i className="bi bi-plus-circle" aria-hidden="true"/> Add
-         </Dropdown.Toggle>
-         <Dropdown.Menu as={ SearchableMenu }>
-         { Object.keys(buildingOptions).reduce<Array<React.ReactNode>>((acc, category) => ([
-         ...acc,
-         <Dropdown.Header key={ `header.${ category }` }>{ t(`app.buildings.category.${ category }`) }</Dropdown.Header>,
-         ...buildingOptions[ category ].map(b => (
-         <Dropdown.Item key={ `value.${ b.value }` } onClick={ () => onAdd(b.value) }>{ b.text }</Dropdown.Item>))
-         ]), []) }
-         </Dropdown.Menu>
-         </Dropdown> */ }
         { selected ? <BuildingForm
           building={ { ...selected } }
           productions={ productions.slice() }
@@ -164,7 +152,9 @@ const BuildingsView: React.ComponentType = () => {
     return [ ...acc, { id: c, buildings: buildings[ c ] || [] } ]
   }, []);
   return (
-    <BuildingsTable buildings={ groupedBuildings } game={ game } productions={ productions } rawBuildings={ rawBuildings }/>
+    <SectionPageView>
+      <BuildingsTable buildings={ groupedBuildings } game={ game } productions={ productions } rawBuildings={ rawBuildings }/>
+    </SectionPageView>
   );
 };
 

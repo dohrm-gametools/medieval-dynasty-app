@@ -12,11 +12,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"math"
 )
 
 type Services interface {
 	Create(ctx context.Context) (*GameDetails, error)
 	FindOne(id string, ctx context.Context) (*GameDetails, error)
+	UpdateGameDetails(gameId string, payload PayloadUpdateGame, ctx context.Context) (*GameDetails, error)
 	CreateOrUpdateWorker(gameId string, worker Worker, ctx context.Context) (*GameDetails, error)
 	DeleteWorker(gameId string, workerId string, ctx context.Context) (*GameDetails, error)
 	CreateOrUpdateBuilding(gameId string, building TownBuilding, ctx context.Context) (*GameDetails, error)
@@ -78,6 +80,42 @@ func (s *services) FindOne(id string, ctx context.Context) (*GameDetails, error)
 	result := s.database.Collection(Name).FindOne(ctx, bson.M{"_id": id})
 	if result.Err() != nil {
 		return nil, result.Err()
+	}
+	res := &GameDetails{}
+	if err := result.Decode(res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (s *services) UpdateGameDetails(gameId string, payload PayloadUpdateGame, ctx context.Context) (*GameDetails, error) {
+	current, err := s.FindOne(gameId, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	update := map[string]map[string]interface{}{}
+
+	if payload.Year != nil {
+		inc := int(math.Max(float64(*payload.Year), 0)) - current.Year
+		update["$inc"] = make(map[string]interface{})
+		update["$inc"]["year"] = inc
+		update["$inc"]["workers.$[].age"] = inc
+	}
+
+	if payload.Season != nil {
+		update["$set"] = make(map[string]interface{})
+		update["$set"]["season"] = *payload.Season
+	}
+
+	println(fmt.Sprintf("%v", update))
+
+	result := s.database.
+		Collection(Name).
+		FindOneAndUpdate(ctx, bson.M{"_id": gameId, "workers.age": bson.M{"$gte": 0}}, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
+	if result.Err() != nil {
+		println(result.Err().Error())
+		return nil, err
 	}
 	res := &GameDetails{}
 	if err := result.Decode(res); err != nil {

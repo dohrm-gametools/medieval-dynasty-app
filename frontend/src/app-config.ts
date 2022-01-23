@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer as loginReducer, reduxKey as loginReduxKey } from '~/src/app/login';
-import { reducer as appLayoutReducer, reduxKey as appLayoutKey } from '~/src/lib/app-layout';
 import { reducer as i18nReducer, reduxKey as i18nReduxKey } from '~/src/lib/i18n';
 import { reducer as gamesReducer, reduxKey as gamesReduxKey } from '~/src/app/game';
 import { reducer as itemsReducer, reduxKey as itemsReduxKey } from '~/src/app/databases/items';
@@ -10,7 +9,6 @@ import { reducer as productionsReducer, reduxKey as productionsReduxKey } from '
 export const appStore = configureStore({
   reducer: {
     [ loginReduxKey ]: loginReducer,
-    [ appLayoutKey ]: appLayoutReducer,
     [ i18nReduxKey ]: i18nReducer,
     [ gamesReduxKey ]: gamesReducer,
     [ itemsReduxKey ]: itemsReducer,

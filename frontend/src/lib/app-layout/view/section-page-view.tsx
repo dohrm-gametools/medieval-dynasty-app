@@ -1,16 +1,24 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
-import { actions } from '../reducer';
+import { AppContext, AppItems } from '../context/app-context';
 
-const SectionPageView: React.ComponentType<{ toolbar?: React.ReactNode }> =
-  ({ toolbar, children }) => {
-    const dispatch = useDispatch();
+
+interface Props {
+  toolbar?: React.ComponentType;
+  rightDrawer?: React.ComponentType;
+}
+
+const SectionPageView: React.ComponentType<Props> =
+  ({ toolbar, rightDrawer, children }) => {
+    const { load } = React.useContext(AppContext);
+
     React.useEffect(() => {
-      dispatch(actions.changePage({ toolbar }));
+      load({ RightDrawer: rightDrawer, Toolbar: toolbar });
+      console.log('in');
       return () => {
-        dispatch(actions.changePage({ toolbar: null }));
+        console.log('out');
+        load({ RightDrawer: undefined, Toolbar: undefined });
       }
-    });
+    }, [ load ]);
     return <>{ children }</>;
   };
 

@@ -1,4 +1,4 @@
-import { Building, GameDetails, TownBuilding, Worker } from '~/src/api';
+import { Building, GameDetails, Season, TownBuilding, Worker } from '~/src/api';
 
 export interface EnrichedWorker extends Worker {}
 
@@ -9,6 +9,8 @@ export interface EnrichedTownBuilding extends TownBuilding {
 
 export interface EnrichedGame {
   id: string;
+  year: number;
+  season: Season;
   workers: Array<EnrichedWorker>;
   buildings: Array<EnrichedTownBuilding>;
 }
@@ -53,6 +55,8 @@ export function getEnrichedGame(game: GameDetails, rawBuildings: Array<Building>
   const taxModifier = townLevel * 0.125;
   return {
     id: game.id,
+    year: game.year,
+    season: game.season,
     workers: game.workers.map(w => mapWorker(w, game, rawBuildings)).sort((a, b) => a.name.toLowerCase() === b.name.toLowerCase() ? 0 : (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1)),
     buildings: game.buildings.reduce<Array<EnrichedTownBuilding>>((acc, b) => {
       const item = mapBuilding(b, rawBuildings, taxModifier);

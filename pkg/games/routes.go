@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+type PayloadUpdateGame struct {
+	Year   *int    `json:"year,omitempty" bson:"year,omitempty"`
+	Season *Season `json:"season,omitempty" bson:"season,omitempty"`
+}
+
 func Routes(services Services, router *gin.RouterGroup, parseErrors func(err error, ctx *gin.Context), authMiddleware gin.HandlerFunc) {
 	timeout := 5 * time.Second
 
@@ -31,6 +36,24 @@ func Routes(services Services, router *gin.RouterGroup, parseErrors func(err err
 			return
 		}
 		c.JSON(200, data)
+	})
+	router.PUT("/:id", func(c *gin.Context) {
+		// TODO Validation
+		update := PayloadUpdateGame{}
+		if err := c.ShouldBindJSON(&update); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+		id := c.Param("id")
+		data, err := services.UpdateGameDetails(id, update, ctx)
+		if err != nil {
+			parseErrors(err, c)
+			return
+		}
+		c.JSON(200, data)
+
 	})
 	router.PUT("/:id/workers", func(c *gin.Context) {
 		// TODO Validation

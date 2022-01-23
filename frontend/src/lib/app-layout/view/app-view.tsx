@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Box, Container, CssBaseline, Divider, IconButton, ListSubheader, Toolbar, Typography } from '@mui/material';
-import { ChevronLeft as ChevronLeftIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { ChevronLeft as ChevronLeftIcon, Menu as MenuIcon, ChevronRight as ChevronRightIcon } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 import AppBar from '../components/app-bar';
 import Drawer from '../components/drawer';
 import Navigation, { Routes } from '../components/navigation';
-
+import { AppContext } from '../context/app-context';
 
 const drawerWidth = 240;
 
@@ -13,10 +14,11 @@ const AppLayout: React.ComponentType<{
   title: string,
   icon?: string,
 }> = props => {
+  const { RightDrawer } = React.useContext(AppContext);
   const [ open, setOpen ] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  }
+  const [ openRight, setOpenRight ] = React.useState(false);
+  const toggleDrawer = () => setOpen(!open);
+  const toggleRightDrawer = () => setOpenRight(!openRight)
 
   return (
     <Box sx={ { display: 'flex' } }>
@@ -46,6 +48,18 @@ const AppLayout: React.ComponentType<{
             sx={ { flexGrow: 1 } }>
             { props.title }
           </Typography>
+          { !!RightDrawer ?
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={ toggleRightDrawer }
+              sx={ {
+                marginLeft: '36px',
+                ...(openRight && { display: 'none' }),
+              } }>
+              <MenuIcon/>
+            </IconButton> : null }
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={ open } drawerWidth={ drawerWidth }>
@@ -79,6 +93,24 @@ const AppLayout: React.ComponentType<{
           { props.children }
         </Container>
       </Box>
+      <Drawer variant="temporary" anchor="right" open={ openRight && !!RightDrawer } drawerWidth={ drawerWidth }>
+        <Toolbar
+          sx={ {
+            backgroundColor: theme => theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.primary.dark,
+            color: theme => theme.palette.primary.contrastText,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: [ 1 ],
+          } }
+        >
+          <IconButton onClick={ toggleRightDrawer } color="inherit">
+            <ChevronRightIcon/>
+          </IconButton>
+        </Toolbar>
+        <Divider/>
+        { RightDrawer ? <RightDrawer/> : null }
+      </Drawer>
     </Box>
   )
 }

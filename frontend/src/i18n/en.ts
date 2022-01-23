@@ -1,6 +1,7 @@
 const en = {
   'lang.en': 'English',
   'lang.fr': 'French',
+  'close': 'Close',
   'save': 'Save',
   'cancel': 'Cancel',
   // Main menu
@@ -17,6 +18,10 @@ const en = {
   'app.database.buildings.table.headers.storage': 'Storage capacity',
   'app.database.buildings.table.headers.worker': 'Worker number',
   'app.database.buildings.table.headers.capacity': 'Capacity',
+  'db.seasons.spring': 'Spring',
+  'db.seasons.summer': 'Summer',
+  'db.seasons.autumn': 'Autumn',
+  'db.seasons.winter': 'Winter',
   // Buildings
   'app.buildings.category.house': 'House',
   'app.buildings.category.extraction': 'Extraction',
@@ -93,7 +98,11 @@ const en = {
   'app.game.building.validation.percent.content': 'It is not possible to allocate more than 100% of works',
   // Summary
   'app.game.summary.title': 'Summary',
+  'app.game.summary.details.title': 'Game details',
+  'app.game.summary.currentYear.title': 'Current year',
+  'app.game.summary.season.title': 'Season',
   'app.game.summary.tax.title': 'Tax (per season)',
+  'app.game.summary.consume.title': 'Consummation',
   'app.game.summary.food.title': 'Food (daily)',
   'app.game.summary.water.title': 'Water (daily)',
   'app.game.summary.wood.title': 'Wood (daily)',

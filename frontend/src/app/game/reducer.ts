@@ -1,6 +1,19 @@
 import { ActionReducerMapBuilder, AsyncThunk, CaseReducer, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { State as I18nState } from '~/src/lib/i18n';
-import { Building, BuildingKind, BuildingsApi, GameApi, GameDetails, Item, ItemsApi, Production, ProductionsApi, TownBuilding, Worker, } from '~/src/api';
+import {
+  Building,
+  BuildingKind,
+  BuildingsApi,
+  GameApi,
+  GameDetails,
+  Item,
+  ItemsApi,
+  Production,
+  ProductionsApi,
+  TownBuilding,
+  UpdateGameDetails,
+  Worker,
+} from '~/src/api';
 import * as services from './services';
 import { EnrichedTownBuilding } from './services';
 
@@ -17,6 +30,11 @@ const list = createAsyncThunk(
     )
   },
 );
+
+const updateGameDetails = createAsyncThunk(
+  `${ reduxKey }/updateGameDetails`,
+  (payload: { id: string, payload: UpdateGameDetails }) => GameApi.updateGameDetails(payload.id, payload.payload)
+)
 
 //
 const saveWorker = createAsyncThunk(
@@ -58,6 +76,8 @@ const initialState: SliceState = {
   loading: false,
   game: {
     id: '',
+    year: 0,
+    season: 'spring',
     buildings: [],
     workers: [],
   },
@@ -114,6 +134,7 @@ const slice = createSlice({
         state.items = items;
         state.game = services.getEnrichedGame(game, buildings);
       })
+    b = addAsyncCases(b, updateGameDetails, defaultOnSuccess);
     b = addAsyncCases(b, saveWorker, defaultOnSuccess);
     b = addAsyncCases(b, deleteWorker, defaultOnSuccess);
     b = addAsyncCases(b, saveBuilding, defaultOnSuccess);
@@ -125,12 +146,11 @@ const slice = createSlice({
 export { getProductionLevel } from './services/get-production-level'
 
 export const { cleanup } = slice.actions;
-export { list, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
-const game = (state: State) => state.game.game;
+export { list, updateGameDetails, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
 export const selectors = {
   loading(state: State) { return state.game.loading },
   listLoaded(state: State) { return state.game.listLoaded },
-  game,
+  game(state: State) { return state.game.game },
   productions(state: State) { return state.game.productions },
   tools(state: State) { return state.game.items },
   rawBuildingById(state: State) {
