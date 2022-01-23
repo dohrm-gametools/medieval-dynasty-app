@@ -9,7 +9,7 @@ import { Dropdown, DropdownOptionGrouped } from '~/src/lib/dropdown';
 import { Kind } from '~/src/api/buildings';
 import SectionPageView from '~/src/lib/app-layout/view/section-page-view';
 import { default as BuildingForm } from '../components/building-form'
-import { deleteBuilding, getProductionLevel, saveBuilding, selectors } from '../reducer';
+import { deleteBuilding, getProductionLevel, saveBuilding, selectors, categorySort } from '../reducer';
 import { EnrichedGame, EnrichedTownBuilding } from '../services';
 
 
@@ -31,17 +31,6 @@ const ButtonActions: React.ComponentType<{ building: TownBuilding, onEdit: (w: T
       <IconButton aria-label="delete" onClick={ () => onRemove(building) }><DeleteIcon/></IconButton>
     </ButtonGroup>
   );
-
-const categorySort = {
-  [ Kind.House.valueOf() ]: 1,
-  [ Kind.Extraction.valueOf() ]: 2,
-  [ Kind.Hunting.valueOf() ]: 3,
-  [ Kind.Production.valueOf() ]: 4,
-  [ Kind.Farming.valueOf() ]: 5,
-  [ Kind.AnimalHusbandry.valueOf() ]: 6,
-  [ Kind.Storage.valueOf() ]: 7,
-  [ Kind.Service.valueOf() ]: 8,
-}
 
 function buildOptions(buildings: { [ key: string ]: Building }, t: (key: string) => string): Array<DropdownOptionGrouped> {
   const result: { [ key: string ]: DropdownOptionGrouped } = {}

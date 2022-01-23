@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ButtonGroup, Card, CardContent, CardHeader, IconButton, } from '@mui/material';
-import { Edit as EditIcon, Fullscreen as FullscreenIcon } from '@mui/icons-material';
+import { Fullscreen as FullscreenIcon } from '@mui/icons-material';
 
 import { selectors } from '~/src/app/game/reducer';
 import { useI18n } from '~/src/lib/i18n';
-import { Season, UpdateGameDetails } from '~/src/api';
+import { Season } from '~/src/api';
 import { updateGameDetails } from '../reducer';
-import GameForm from '../components/game-form';
 import { AccordionView, FullscreenView } from '../components/summary-details';
 
 

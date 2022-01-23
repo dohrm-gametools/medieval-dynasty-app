@@ -1,4 +1,5 @@
 import { Building, GameDetails, Season, TownBuilding, Worker } from '~/src/api';
+import { Kind } from '~/src/api/buildings';
 
 export interface EnrichedWorker extends Worker {}
 
@@ -13,6 +14,17 @@ export interface EnrichedGame {
   season: Season;
   workers: Array<EnrichedWorker>;
   buildings: Array<EnrichedTownBuilding>;
+}
+
+export const categorySort = {
+  [ Kind.House.valueOf() ]: 1,
+  [ Kind.Extraction.valueOf() ]: 2,
+  [ Kind.Hunting.valueOf() ]: 3,
+  [ Kind.Production.valueOf() ]: 4,
+  [ Kind.Farming.valueOf() ]: 5,
+  [ Kind.AnimalHusbandry.valueOf() ]: 6,
+  [ Kind.Storage.valueOf() ]: 7,
+  [ Kind.Service.valueOf() ]: 8,
 }
 
 export function getTownLevel(nbBuilding: number): number {
@@ -64,6 +76,25 @@ export function getEnrichedGame(game: GameDetails, rawBuildings: Array<Building>
         return [ ...acc, item ]
       }
       return acc;
-    }, []),
+    }, []).sort((a, b) => {
+      const cata = categorySort[ a.raw.category.valueOf() ] || 99;
+      const catb = categorySort[ b.raw.category.valueOf() ] || 99;
+      if (cata < catb) return -1;
+      if (cata > catb) return 1;
+      const na = rawBuildings.findIndex(v => v.id === a.buildingId);
+      const nb = rawBuildings.findIndex(v => v.id === b.buildingId);
+      if (na < nb) return -1;
+      if (na > nb) return 1;
+      if (a.alias && b.alias) {
+        if (a.alias < b.alias) return -1;
+        if (a.alias > b.alias) return 1;
+        return 0;
+      } else if (a.alias) {
+        return 1;
+      } else if (b.alias) {
+        return -1;
+      }
+      return 0;
+    }),
   }
 }

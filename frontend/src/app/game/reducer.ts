@@ -143,7 +143,8 @@ const slice = createSlice({
 });
 
 
-export { getProductionLevel } from './services/get-production-level'
+export { getProductionLevel } from './services/get-production-level';
+export { categorySort } from './services/get-enriched-game';
 
 export const { cleanup } = slice.actions;
 export { list, updateGameDetails, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
