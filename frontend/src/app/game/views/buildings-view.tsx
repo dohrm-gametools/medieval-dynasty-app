@@ -100,7 +100,10 @@ const BuildingsTable: React.ComponentType<{
     const columns: Array<ColumnDef<EnrichedTownBuilding>> = [
       createColumnDef('', 10, 'app.game.building', t, { render: c => <ButtonActions building={ c } onRemove={ onRemove } onEdit={ onEdit }/> }),
       createColumnDef('category', 10, 'app.game.building', t, { sortable: true, accessor: c => t(`app.buildings.category.${ c.raw.category }`) }),
-      createColumnDef('name', 30, 'app.game.building', t, { sortable: true, accessor: c => t(`db.buildings.${ c.buildingId }`) }),
+      createColumnDef('name', 30, 'app.game.building', t, {
+        sortable: true,
+        accessor: c => `${ t(`db.buildings.${ c.buildingId }`) }${ c.alias && ' (' + c.alias + ')' || '' }`
+      }),
       createColumnDef('productionLevel', 10, 'app.game.building', t, {
         sortable: true,
         accessor: c => getProductionLevel(c.raw, c.assignedWorker, game) || ''

@@ -98,6 +98,7 @@ const fr: { [ key: string ]: string } = {
   'app.game.worker.crafting': 'Production',
   'app.game.building.category': 'Categorie',
   'app.game.building.name': 'Nom',
+  'app.game.building.alias': 'Alias',
   'app.game.building.workers': 'Travailleurs',
   'app.game.building.productions': 'Productions',
   'app.game.building.productionLevel': 'Niveau de production',

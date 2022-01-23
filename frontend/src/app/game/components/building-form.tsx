@@ -80,13 +80,15 @@ class BuildingForm extends React.Component<{
       const assignedWorker = [ ...this.state.data.assignedWorker ];
       assignedWorker[ idx ] = value as string;
       newData = { ...this.state.data, assignedWorker };
-    }
-    if (name.indexOf('prod:') === 0) {
+    } else if (name.indexOf('prod:') === 0) {
       const idx = parseInt(name.substring('prod:'.length));
       const productions = [ ...this.state.data.productions ];
       productions[ idx ] = { ...productions[ idx ], percentage: parseInt(value) };
       newData = { ...this.state.data, productions };
+    } else {
+      newData = { ...this.state.data, [ name ]: value };
     }
+
     if (!!newData) {
       this.setState({
         data: newData,
@@ -118,6 +120,15 @@ class BuildingForm extends React.Component<{
         <DialogContent>
           <DialogContentText>&nbsp;</DialogContentText>
           <Grid container component="form" spacing={ 2 }>
+            <Grid item xs={ 12 }>
+              <TextField
+                value={ state.alias || '' }
+                name={ `alias` }
+                onChange={ (e) => this.onChange({ name: e.target.name, value: e.target.value }) }
+                sx={ { width: '100%' } }
+                label={ t('app.game.building.alias') }
+              />
+            </Grid>
             { state.assignedWorker.map((d, idx) => (
               <Grid item key={ `worker:${ idx }` } xs={ 3 }>
                 <TextField

@@ -89,6 +89,7 @@ const en = {
   'app.game.worker.crafting': 'Crafting',
   'app.game.building.category': 'Category',
   'app.game.building.name': 'Name',
+  'app.game.building.alias': 'Alias',
   'app.game.building.workers': 'Workers',
   'app.game.building.productions': 'Productions',
   'app.game.building.productionLevel': 'Production level',
