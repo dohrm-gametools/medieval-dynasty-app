@@ -101,7 +101,7 @@ const BuildingsTable: React.ComponentType<{
         sortable: true,
         accessor: b => `${ b.assignedWorker.length } / ${ (b.raw.category === Kind.House ? b.raw.capacity : b.raw.worker) || 0 }`
       }),
-      createColumnDef('productionRate', 10, 'app.game.building', t, { sortable: true, accessor: b => b.productions.reduce((acc, c) => acc + c.percentage, 0) }),
+      createColumnDef('productionRate', 10, 'app.game.building', t, { sortable: true, accessor: b => b.productions.reduce((acc, c) => acc + c.productionValue, 0) }),
       createColumnDef('tax', 10, 'app.game.building', t, { sortable: true, accessor: c => c.tax }),
     ];
     const sortFunction = generateSortFunction(sort, columns);

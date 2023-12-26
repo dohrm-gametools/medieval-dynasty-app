@@ -1,6 +1,6 @@
 export interface ProductionWithAssignment {
   productionId: string;
-  percentage: number;
+  productionValue: number;
 }
 
 export interface TownBuilding {

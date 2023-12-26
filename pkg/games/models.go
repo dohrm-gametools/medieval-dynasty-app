@@ -1,8 +1,8 @@
 package games
 
 type ProductionWithAssignment struct {
-	ProductionId string  `json:"productionId" bson:"productionId"`
-	Percentage   float32 `json:"percentage" bson:"percentage"`
+	ProductionId    string  `json:"productionId" bson:"productionId"`
+	ProductionValue float32 `json:"productionValue" bson:"productionValue"`
 }
 
 type TownBuilding struct {

@@ -62,12 +62,11 @@ export function dailySummary(
     const buildingBase = rawBuildings.find(c => c.id === building.buildingId);
     if (!buildingBase) return;
     aggregator.tax += building.tax;
-    const productionLevel = getProductionLevel(buildingBase, building.assignedWorker, game) || 0;
     building.productions.forEach(production => {
       const productionBase = rawProductions.find(p => p.id === production.productionId);
       if (!productionBase) return;
       const maybeItem = rawItems.find(t => t.id === productionBase.itemId);
-      const dailyProduced = productionBase.producedPerDay * (production.percentage / 100) * productionLevel; // TODO Add character peak, season modifier,...
+      const dailyProduced = production.productionValue; // TODO Add character peak, season modifier,...
       if (maybeItem && maybeItem.tool) {
         appendAggregate(maybeItem.tool, 'produced', dailyProduced * productionBase.stack * (maybeItem.durability || 0), aggregator.tools);
       }
