@@ -77,7 +77,7 @@ class BuildingForm extends React.Component<{
     } else if (name.indexOf('prod:') === 0) {
       const idx = parseInt(name.substring('prod:'.length));
       const productions = [...this.state.data.productions];
-      productions[idx] = { ...productions[idx], productionValue: parseInt(value) };
+      productions[idx] = { ...productions[idx], productionValue: parseFloat(value) };
       newData = { ...this.state.data, productions };
     } else {
       newData = { ...this.state.data, [name]: value };
