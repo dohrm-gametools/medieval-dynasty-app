@@ -55,6 +55,22 @@ func Routes(services Services, router *gin.RouterGroup, parseErrors func(err err
 		c.JSON(200, data)
 
 	})
+	router.PUT("/:id/import", func(c *gin.Context) {
+		payload := &GameDetails{}
+		if err := c.ShouldBindJSON(payload); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+		id := c.Param("id")
+		data, err := services.Import(id, payload, ctx)
+		if err != nil {
+			parseErrors(err, c)
+			return
+		}
+		c.JSON(200, data)
+	})
 	router.PUT("/:id/workers", func(c *gin.Context) {
 		// TODO Validation
 		worker := Worker{}

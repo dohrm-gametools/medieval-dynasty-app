@@ -23,6 +23,7 @@ type Services interface {
 	DeleteWorker(gameId string, workerId string, ctx context.Context) (*GameDetails, error)
 	CreateOrUpdateBuilding(gameId string, building TownBuilding, ctx context.Context) (*GameDetails, error)
 	DeleteBuilding(gameId string, buildingId string, ctx context.Context) (*GameDetails, error)
+	Import(gameId string, details *GameDetails, ctx context.Context) (*GameDetails, error)
 }
 
 func NewServices(
@@ -115,7 +116,7 @@ func (s *services) UpdateGameDetails(gameId string, payload PayloadUpdateGame, c
 		FindOneAndUpdate(ctx, bson.M{"_id": gameId, "workers.age": bson.M{"$gte": 0}}, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
 	if result.Err() != nil {
 		println(result.Err().Error())
-		return nil, err
+		return nil, result.Err()
 	}
 	res := &GameDetails{}
 	if err := result.Decode(res); err != nil {
@@ -276,4 +277,19 @@ func (s *services) DeleteBuilding(gameId string, buildingId string, ctx context.
 	}
 	game.Buildings = buildings
 	return s.save(game, ctx)
+}
+
+func (s *services) Import(gameId string, gameDetails *GameDetails, ctx context.Context) (*GameDetails, error) {
+	result := s.database.
+		Collection(Name).
+		FindOneAndReplace(ctx, bson.M{"_id": gameId, "workers.age": bson.M{"$gte": 0}}, gameDetails, options.FindOneAndReplace().SetReturnDocument(options.After))
+	if result.Err() != nil {
+		println(result.Err().Error())
+		return nil, result.Err()
+	}
+	res := &GameDetails{}
+	if err := result.Decode(res); err != nil {
+		return nil, err
+	}
+	return res, nil
 }
