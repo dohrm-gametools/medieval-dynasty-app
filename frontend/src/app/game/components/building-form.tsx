@@ -112,6 +112,9 @@ class BuildingForm extends React.Component<{
     if (!this.state) return null;
     const { t } = this.props;
     const { data: state, availableWorkers, baseBuilding, productionsById, productionFilter } = this.state;
+    const productions = state.productions.map(((d, idx) => ({ ...d, production: productionsById[d.productionId], idx })));
+    const filteredProductions = productions
+      .filter(v => productionFilter === '' || sanitize(t(`db.items.${v.production?.itemId}`)).indexOf(sanitize(productionFilter)) > -1)
     return (
       <Dialog open maxWidth="md" fullWidth aria-labelledby="form-dialog" disableEscapeKeyDown disablePortal>
         <DialogTitle id="form-dialog">{t('app.game.tabs.buildings')} ({t(`db.buildings.${baseBuilding.id}`)})</DialogTitle>
@@ -141,7 +144,7 @@ class BuildingForm extends React.Component<{
                 </TextField>
               </Grid>
             ))}
-            {state.productions.length > 0 ?
+            {productions.length > 0 ?
               <>
                 <Grid item xs={12}/>
                 <Grid item xs={2}><h3>{t(`app.game.building.productions`)}</h3></Grid>
@@ -157,28 +160,26 @@ class BuildingForm extends React.Component<{
                 </Grid>
               </> : null
             }
-            {state.productions
-              .map(d => ({ ...d, production: productionsById[d.productionId] }))
-              .filter(v => productionFilter === '' || sanitize(t(`db.items.${v.production?.itemId}`)).indexOf(sanitize(productionFilter)) > -1)
-              .map((d, idx) => {
-                const prod = d.production;
-                const recipe = prod.costs.map(c => `${t(`db.items.${c.id}`)} x ${c.count}`).join(', ');
-                return (
-                  <Grid item key={`group-prod-${idx}`} xs={6}>
-                    <TextField
-                      key={`prod-${idx}`}
-                      disabled={prod.producedPerDay <= 0}
-                      type="number"
-                      value={d.productionValue}
-                      name={`prod:${idx}`}
-                      onChange={(e) => this.onChange({ name: e.target.name, value: e.target.value })}
-                      sx={{ width: '100%' }}
-                      label={`${t(`db.items.${prod.itemId}`)}${prod.stack > 1 ? ` x ${prod.stack}` : ''}`}
-                      helperText={recipe || ' '}
-                    />
-                  </Grid>
-                )
-              })}
+            {filteredProductions.map(d => {
+              const idx = d.idx;
+              const prod = d.production;
+              const recipe = prod.costs.map(c => `${t(`db.items.${c.id}`)} x ${c.count}`).join(', ');
+              return (
+                <Grid item key={`group-prod-${idx}`} xs={6}>
+                  <TextField
+                    key={`prod-${idx}`}
+                    disabled={prod.producedPerDay <= 0}
+                    type="number"
+                    value={d.productionValue}
+                    name={`prod:${idx}`}
+                    onChange={(e) => this.onChange({ name: e.target.name, value: e.target.value })}
+                    sx={{ width: '100%' }}
+                    label={`${t(`db.items.${prod.itemId}`)}${prod.stack > 1 ? ` x ${prod.stack}` : ''}`}
+                    helperText={recipe || ' '}
+                  />
+                </Grid>
+              )
+            })}
           </Grid>
           <DialogActions>
             <Button onClick={this.cancel}>{t('cancel')}</Button>
@@ -186,7 +187,8 @@ class BuildingForm extends React.Component<{
           </DialogActions>
         </DialogContent>
       </Dialog>
-    );
+    )
+      ;
   }
 }
 
