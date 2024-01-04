@@ -10,7 +10,7 @@ import { default as baseI18n } from './i18n';
 import { I18nApi } from '~/src/api';
 import { appStore } from '~/src/app-config';
 import { I18nLoader } from '~/src/lib/i18n';
-import { BuildingsView, GameView, WorkersView } from '~/src/app/game';
+import { BuildingsView, GameView, ProductionsView, WorkersView } from '~/src/app/game';
 
 import { GameIcon } from '~/src/app/main/components/game-icon';
 import { DatabasesView } from '~/src/app/databases/root'
@@ -18,7 +18,7 @@ import { ItemsListView } from '~/src/app/databases/items';
 import { BuildingsListView } from '~/src/app/databases/buildings';
 import { ProductionsListView } from '~/src/app/databases/productions';
 import { AuthLoader } from '~/src/app/login';
-import { AppLayout, AppContextProvider } from '~/src/lib/app-layout';
+import { AppContextProvider, AppLayout } from '~/src/lib/app-layout';
 
 const Redirect: React.ComponentType<{ to: string }> = ({ to }) => {
   const navigate = useNavigate();
@@ -58,20 +58,21 @@ const theme = createTheme({
 
 const Application = () => (
   <React.StrictMode>
-    <Provider store={ appStore }>
-      <Auth0Provider domain="dohrm.eu.auth0.com" clientId="MKMfoFtjys1ZsB2i7wma9VwXqAwCv9oc" redirectUri={ `${ window.location.origin }/login` }>
+    <Provider store={appStore}>
+      <Auth0Provider domain="dohrm.eu.auth0.com" clientId="MKMfoFtjys1ZsB2i7wma9VwXqAwCv9oc" redirectUri={`${window.location.origin}/login`}>
         <AuthLoader>
-          <I18nLoader baseI18n={ baseI18n } asyncI18nLoader={ I18nApi.load }>
-            <ThemeProvider theme={ theme }>
+          <I18nLoader baseI18n={baseI18n} asyncI18nLoader={I18nApi.load}>
+            <ThemeProvider theme={theme}>
               <BrowserRouter>
                 <AppContextProvider>
                   <AppLayout
-                    title={ 'Medieval Dynasty' }
-                    routes={ [
+                    title={'Medieval Dynasty'}
+                    routes={[
                       {
                         key: 'menu.game.title', path: '/game', children: [
                           { key: 'app.game.tabs.workers', path: '/game/workers', icon: <GameIcon path="/workers.png"/> },
                           { key: 'app.game.tabs.buildings', path: '/game/buildings', icon: <GameIcon path="/buildings.png"/> },
+                          { key: 'app.game.tabs.productions', path: '/game/productions', icon: <GameIcon path="/crafting.png"/> },
                         ]
                       },
                       {
@@ -81,21 +82,22 @@ const Application = () => (
                           { key: 'app.database.tabs.productions', path: '/databases/productions', icon: <GameIcon path="/production-db.png"/> },
                         ]
                       },
-                    ] }>
+                    ]}>
                     <Routes>
-                      <Route path="/" element={ <Outlet/> }>
-                        <Route path="game" element={ <GameView/> }>
-                          <Route path="workers" element={ <WorkersView/> }/>
-                          <Route path="buildings" element={ <BuildingsView/> }/>
-                          <Route index element={ <Redirect to="/game/workers"/> }/>
+                      <Route path="/" element={<Outlet/>}>
+                        <Route path="game" element={<GameView/>}>
+                          <Route path="workers" element={<WorkersView/>}/>
+                          <Route path="buildings" element={<BuildingsView/>}/>
+                          <Route path="productions" element={<ProductionsView/>}/>
+                          <Route index element={<Redirect to="/game/workers"/>}/>
                         </Route>
-                        <Route path="databases" element={ <DatabasesView/> }>
-                          <Route path="buildings" element={ <BuildingsListView/> }/>
-                          <Route path="items" element={ <ItemsListView/> }/>
-                          <Route path="productions" element={ <ProductionsListView/> }/>
-                          <Route index element={ <Redirect to="/databases/buildings"/> }/>
+                        <Route path="databases" element={<DatabasesView/>}>
+                          <Route path="buildings" element={<BuildingsListView/>}/>
+                          <Route path="items" element={<ItemsListView/>}/>
+                          <Route path="productions" element={<ProductionsListView/>}/>
+                          <Route index element={<Redirect to="/databases/buildings"/>}/>
                         </Route>
-                        <Route index element={ <Redirect to="/game"/> }/>
+                        <Route index element={<Redirect to="/game"/>}/>
                       </Route>
                     </Routes>
                   </AppLayout>

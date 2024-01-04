@@ -72,6 +72,7 @@ const en = {
   // Games
   'app.game.tabs.buildings': 'Buildings',
   'app.game.tabs.workers': 'Workers',
+  'app.game.tabs.productions': 'Productions',
   'app.game.tabs.houses': 'Houses',
   'app.game.tabs.fieldsOrOrchard': 'Fields & orchard',
   'app.game.tabs.productionOrExtraction': 'Production & extraction',
@@ -97,6 +98,12 @@ const en = {
   'app.game.building.tax': 'Tax',
   'app.game.building.validation.percent.header': 'Error when you set production rate',
   'app.game.building.validation.percent.content': 'It is not possible to allocate more than 100% of works',
+  'app.game.productions.name': 'Production',
+  'app.game.productions.building': 'Building',
+  'app.game.productions.production': 'Produced',
+  'app.game.productions.+': 'Total',
+  'app.game.productions.-': 'Consumed',
+  'app.game.productions.total': 'Remaining',
   // Summary
   'app.game.summary.title': 'Summary',
   'app.game.summary.details.title': 'Game details',

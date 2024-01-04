@@ -11,14 +11,14 @@ export * from './games';
 
 function asModel<T>(response: Response): Promise<T> {
   if (response.status >= 400) {
-    return Promise.reject(`[${ response.status }] error in api call`)
+    return Promise.reject(`[${response.status}] error in api call`)
   }
   return response.json();
 }
 
 export module I18nApi {
-  export function load(): Promise<{ [ lang: string ]: { [ key: string ]: string } }> {
-    return fetch(`/api/i18n`).then(c => asModel<{ [ lang: string ]: { [ key: string ]: string } }>(c));
+  export function load(): Promise<{ [lang: string]: { [key: string]: string } }> {
+    return fetch(`/api/i18n`).then(c => asModel<{ [lang: string]: { [key: string]: string } }>(c));
   }
 }
 
@@ -45,6 +45,7 @@ export const BuildingCreationId = 'MyAwesomeBuildingIsPendingForCreation ...';
 
 export module GameApi {
   const keyId = 'medieval-dynasty-game-id';
+  const keyGames = 'medieval-dynasty-game-ids'
 
   function getId(): string | undefined {
     const id = localStorage.getItem(keyId);
@@ -57,15 +58,29 @@ export module GameApi {
       return create();
     }
 
-    return fetch(`/api/games/${ id }`).then(c => {
+    return fetch(`/api/games/${id}`).then(c => {
       if (c.status === 404) return create();
       return asModel<GameDetails>(c);
     }).then(g => ({ ...g, year: g.year || 0, season: g.season || 'spring' })); // Fix missing model attributes
   }
 
+  export function listGames(): Array<string> {
+    const json = localStorage.getItem(keyGames);
+    return !json || json === '' ? [] : JSON.parse(json);
+  }
+
+  export function addGame(id: string) {
+    const games = listGames();
+    if (games.indexOf(id) === -1) {
+      games.push(id);
+      localStorage.setItem(keyGames, JSON.stringify(games));
+    }
+  }
+
   export function create(): Promise<GameDetails> {
     return fetch('/api/games', { method: 'POST' }).then(c => asModel<GameDetails>(c)).then(res => {
       localStorage.setItem(keyId, res.id);
+      addGame(res.id);
       return res;
     });
   }
@@ -75,31 +90,31 @@ export module GameApi {
   }
 
   export function updateGameDetails(id: string, data: UpdateGameDetails): Promise<GameDetails> {
-    return fetch(`/api/games/${ id }`, {
+    return fetch(`/api/games/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ ...data })
     }).then(c => asModel<GameDetails>(c));
   }
 
   export function createOrUpdateWorker(id: string, worker: Worker): Promise<GameDetails> {
-    return fetch(`/api/games/${ id }/workers`, {
+    return fetch(`/api/games/${id}/workers`, {
       method: 'PUT',
       body: JSON.stringify({ ...worker, id: (worker.id === WorkerCreationId ? '' : worker.id) })
     }).then(c => asModel<GameDetails>(c));
   }
 
   export function deleteWorker(id: string, workerId: string): Promise<GameDetails> {
-    return fetch(`/api/games/${ id }/workers/${ workerId }`, { method: 'DELETE' }).then(c => asModel<GameDetails>(c));
+    return fetch(`/api/games/${id}/workers/${workerId}`, { method: 'DELETE' }).then(c => asModel<GameDetails>(c));
   }
 
   export function createOrUpdateBuilding(id: string, building: TownBuilding): Promise<GameDetails> {
-    return fetch(`/api/games/${ id }/buildings`, {
+    return fetch(`/api/games/${id}/buildings`, {
       method: 'PUT',
       body: JSON.stringify({ ...building, id: (building.id === BuildingCreationId ? '' : building.id) })
     }).then(c => asModel<GameDetails>(c));
   }
 
   export function deleteBuilding(id: string, buildingId: string): Promise<GameDetails> {
-    return fetch(`/api/games/${ id }/buildings/${ buildingId }`, { method: 'DELETE' }).then(c => asModel<GameDetails>(c));
+    return fetch(`/api/games/${id}/buildings/${buildingId}`, { method: 'DELETE' }).then(c => asModel<GameDetails>(c));
   }
 }

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, MenuItem, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, InputAdornment, MenuItem, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { Building, Production, TownBuilding, Worker } from '~/src/api';
 import { With18nProps, withI18n } from '~/src/lib/i18n';
 import { Kind } from '~/src/api/buildings';
@@ -46,6 +47,11 @@ interface CmpState {
   availableWorkers: Array<WorkerOption>;
   baseBuilding: Building;
   productionsById: { [key: string]: Production };
+  productionFilter: string;
+}
+
+function sanitize(value: string): string {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
 class BuildingForm extends React.Component<{
@@ -63,7 +69,8 @@ class BuildingForm extends React.Component<{
       data: prepareState(this.props.building, this.props.rawBuildings[this.props.building.buildingId], this.props.productions),
       availableWorkers: filterWorkers(this.props.workers, this.props.building.assignedWorker),
       baseBuilding: this.props.rawBuildings[this.props.building.buildingId],
-      productionsById: this.props.productions.reduce((acc, c) => ({ ...acc, [c.id]: c }), {})
+      productionsById: this.props.productions.reduce((acc, c) => ({ ...acc, [c.id]: c }), {}),
+      productionFilter: '',
     });
   }
 
@@ -104,7 +111,7 @@ class BuildingForm extends React.Component<{
   render() {
     if (!this.state) return null;
     const { t } = this.props;
-    const { data: state, availableWorkers, baseBuilding, productionsById } = this.state;
+    const { data: state, availableWorkers, baseBuilding, productionsById, productionFilter } = this.state;
     return (
       <Dialog open maxWidth="md" fullWidth aria-labelledby="form-dialog" disableEscapeKeyDown disablePortal>
         <DialogTitle id="form-dialog">{t('app.game.tabs.buildings')} ({t(`db.buildings.${baseBuilding.id}`)})</DialogTitle>
@@ -134,26 +141,44 @@ class BuildingForm extends React.Component<{
                 </TextField>
               </Grid>
             ))}
-            {state.productions.length > 0 ? <Grid item xs={12}><h3>{t(`app.game.building.productions`)}</h3></Grid> : null}
-            {state.productions.map((d, idx) => {
-              const prod = productionsById[d.productionId];
-              const recipe = prod.costs.map(c => `${t(`db.items.${c.id}`)} x ${c.count}`).join(', ');
-              return (
-                <Grid item key={`group-prod-${idx}`} xs={6}>
+            {state.productions.length > 0 ?
+              <>
+                <Grid item xs={12}/>
+                <Grid item xs={2}><h3>{t(`app.game.building.productions`)}</h3></Grid>
+                <Grid item xs={10}>
                   <TextField
-                    key={`prod-${idx}`}
-                    disabled={prod.producedPerDay <= 0}
-                    type="number"
-                    value={d.productionValue}
-                    name={`prod:${idx}`}
-                    onChange={(e) => this.onChange({ name: e.target.name, value: e.target.value })}
                     sx={{ width: '100%' }}
-                    label={`${t(`db.items.${prod.itemId}`)}${prod.stack > 1 ? ` x ${prod.stack}` : ''}`}
-                    helperText={recipe || ' '}
+                    InputProps={{
+                      startAdornment: (<InputAdornment position='start'><SearchIcon/></InputAdornment>)
+                    }}
+                    value={productionFilter}
+                    onChange={(e) => this.setState({ productionFilter: e.target.value })}
                   />
                 </Grid>
-              )
-            })}
+              </> : null
+            }
+            {state.productions
+              .map(d => ({ ...d, production: productionsById[d.productionId] }))
+              .filter(v => productionFilter === '' || sanitize(t(`db.items.${v.production?.itemId}`)).indexOf(sanitize(productionFilter)) > -1)
+              .map((d, idx) => {
+                const prod = d.production;
+                const recipe = prod.costs.map(c => `${t(`db.items.${c.id}`)} x ${c.count}`).join(', ');
+                return (
+                  <Grid item key={`group-prod-${idx}`} xs={6}>
+                    <TextField
+                      key={`prod-${idx}`}
+                      disabled={prod.producedPerDay <= 0}
+                      type="number"
+                      value={d.productionValue}
+                      name={`prod:${idx}`}
+                      onChange={(e) => this.onChange({ name: e.target.name, value: e.target.value })}
+                      sx={{ width: '100%' }}
+                      label={`${t(`db.items.${prod.itemId}`)}${prod.stack > 1 ? ` x ${prod.stack}` : ''}`}
+                      helperText={recipe || ' '}
+                    />
+                  </Grid>
+                )
+              })}
           </Grid>
           <DialogActions>
             <Button onClick={this.cancel}>{t('cancel')}</Button>

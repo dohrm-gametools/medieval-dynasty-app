@@ -81,6 +81,7 @@ const fr: { [ key: string ]: string } = {
   // Games
   'app.game.tabs.workers': 'Travailleurs',
   'app.game.tabs.houses': 'Maisons',
+  'app.game.tabs.productions': 'Productions',
   'app.game.tabs.fieldsOrOrchard': 'Champs & verger',
   'app.game.tabs.productionOrExtraction': 'Production & extraction',
   'app.game.tabs.storages': 'Stockages',
@@ -106,6 +107,12 @@ const fr: { [ key: string ]: string } = {
   'app.game.building.tax': 'Taxe',
   'app.game.building.validation.percent.header': 'Erreur lors de la saisie des productions',
   'app.game.building.validation.percent.content': 'Il n\'est pas possible d\'attribuer plus de 100% de force de travail',
+  'app.game.productions.name': 'Production',
+  'app.game.productions.building': 'Bâtiment',
+  'app.game.productions.production': 'Produit',
+  'app.game.productions.+': 'Total',
+  'app.game.productions.-': 'Consommé',
+  'app.game.productions.total': 'Restant',
   // Summary
   'app.game.summary.title': 'Résumé',
   'app.game.summary.details.title': 'Détails de la partie',

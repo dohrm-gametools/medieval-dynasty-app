@@ -9,17 +9,17 @@ import {
   Item,
   ItemsApi,
   Production,
-  ProductionsApi,
+  ProductionsApi, ProductionWithAssignment,
   TownBuilding,
   UpdateGameDetails,
   Worker,
 } from '~/src/api';
 import * as services from './services';
-import { EnrichedTownBuilding } from './services';
+import { EnrichedTownBuilding, ProductionLine } from './services';
 
 export const reduxKey = 'game';
 const list = createAsyncThunk(
-  `${ reduxKey }/list`,
+  `${reduxKey}/list`,
   () => {
     return Promise.all([
         GameApi.one(),
@@ -32,29 +32,47 @@ const list = createAsyncThunk(
 );
 
 const updateGameDetails = createAsyncThunk(
-  `${ reduxKey }/updateGameDetails`,
+  `${reduxKey}/updateGameDetails`,
   (payload: { id: string, payload: UpdateGameDetails }) => GameApi.updateGameDetails(payload.id, payload.payload)
 )
 
 //
 const saveWorker = createAsyncThunk(
-  `${ reduxKey }/saveWorker`,
+  `${reduxKey}/saveWorker`,
   (payload: { id: string, worker: Worker }) => GameApi.createOrUpdateWorker(payload.id, payload.worker),
 )
 
 const deleteWorker = createAsyncThunk(
-  `${ reduxKey }/deleteWorker`,
+  `${reduxKey}/deleteWorker`,
   (payload: { id: string, worker: string }) => GameApi.deleteWorker(payload.id, payload.worker),
 )
 
 const saveBuilding = createAsyncThunk(
-  `${ reduxKey }/saveBuilding`,
+  `${reduxKey}/saveBuilding`,
   (payload: { id: string, building: TownBuilding }) => GameApi.createOrUpdateBuilding(payload.id, payload.building),
 )
 
 const deleteBuilding = createAsyncThunk(
-  `${ reduxKey }/deleteBuilding`,
+  `${reduxKey}/deleteBuilding`,
   (payload: { id: string, building: string }) => GameApi.deleteBuilding(payload.id, payload.building),
+)
+
+const saveProductionLine = createAsyncThunk(
+  `${reduxKey}/addProductionLine`,
+  (payload: { id: string, production: ProductionWithAssignment, building: TownBuilding }) =>
+    GameApi.createOrUpdateBuilding(payload.id, {
+      ...payload.building,
+      productions: [...payload.building.productions.filter(f => f.productionId !== payload.production.productionId), payload.production],
+    })
+)
+
+const deleteProductionLine = createAsyncThunk(
+  `${reduxKey}/deleteProductionLine`,
+  (payload: { id: string, production: ProductionWithAssignment, building: TownBuilding }) =>
+    GameApi.createOrUpdateBuilding(payload.id, {
+      ...payload.building,
+      productions: [...payload.building.productions.filter(f => f.productionId !== payload.production.productionId)],
+    })
 )
 
 export interface SliceState {
@@ -122,7 +140,7 @@ const slice = createSlice({
         state.listLoaded = false;
       })
       .addCase(list.fulfilled, (state, action) => {
-        const [ game, buildings, products, items ] = action.payload
+        const [game, buildings, products, items] = action.payload
         state.listLoaded = true;
         if (!game) {
           // Should not append ...
@@ -139,6 +157,8 @@ const slice = createSlice({
     b = addAsyncCases(b, deleteWorker, defaultOnSuccess);
     b = addAsyncCases(b, saveBuilding, defaultOnSuccess);
     b = addAsyncCases(b, deleteBuilding, defaultOnSuccess);
+    b = addAsyncCases(b, saveProductionLine, defaultOnSuccess);
+    b = addAsyncCases(b, deleteProductionLine, defaultOnSuccess);
   }
 });
 
@@ -147,32 +167,33 @@ export { getProductionLevel } from './services/get-production-level';
 export { categorySort } from './services/get-enriched-game';
 
 export const { cleanup } = slice.actions;
-export { list, updateGameDetails, saveWorker, deleteWorker, saveBuilding, deleteBuilding };
+export { list, updateGameDetails, saveWorker, deleteWorker, saveBuilding, deleteBuilding, saveProductionLine, deleteProductionLine };
 export const selectors = {
   loading(state: State) { return state.game.loading },
   listLoaded(state: State) { return state.game.listLoaded },
   game(state: State) { return state.game.game },
   productions(state: State) { return state.game.productions },
+  productionLines(state: State) { return services.getProductionLines(state.game.game, state.game.productions) },
   tools(state: State) { return state.game.items },
   rawBuildingById(state: State) {
-    return state.game.buildings.reduce<{ [ id: string ]: Building }>((acc, c) => ({ ...acc, [ c.id ]: c }), {});
+    return state.game.buildings.reduce<{ [id: string]: Building }>((acc, c) => ({ ...acc, [c.id]: c }), {});
   },
   buildingsByCategory(state: State) {
     return state.game.game.buildings.reduce((acc, c) => {
       const building = state.game.buildings.find(b => b.id === c.buildingId);
       if (building) {
-        return { ...acc, [ building.category.valueOf() ]: [ ...acc[ building.category.valueOf() ], c ] };
+        return { ...acc, [building.category.valueOf()]: [...acc[building.category.valueOf()], c] };
       }
       return acc;
     }, {
-      [ BuildingKind.House.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.Extraction.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.Hunting.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.Farming.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.AnimalHusbandry.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.Production.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.Service.valueOf() ]: [] as Array<EnrichedTownBuilding>,
-      [ BuildingKind.Storage.valueOf() ]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.House.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.Extraction.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.Hunting.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.Farming.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.AnimalHusbandry.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.Production.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.Service.valueOf()]: [] as Array<EnrichedTownBuilding>,
+      [BuildingKind.Storage.valueOf()]: [] as Array<EnrichedTownBuilding>,
     })
   },
   summary(state: State) { return services.dailySummary(state.game.game, state.game.buildings, state.game.productions, state.game.items)}
