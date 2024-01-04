@@ -6,22 +6,23 @@ import { SectionPageView } from '~/src/lib/app-layout';
 import { Loader } from '~/src/lib/loader';
 import SummaryView from './summary-view';
 import { cleanup, list, selectors } from '../reducer';
+import { WithGameId, withGameId } from '~/src/app/main';
 
 
 const GameView: React.ComponentType = () => {
   const listLoaded = useSelector(selectors.listLoaded);
   return (
-    <Loader loaded={ listLoaded }>
-      <Box sx={ {
+    <Loader loaded={listLoaded}>
+      <Box sx={{
         flexGrow: 1,
         height: '100%',
         width: '100%',
-      } }>
-        <Grid height="100%" container spacing={ 2 }>
-          <Grid style={ { height: '100%', minHeight: '300px' } } item xs={ 12 } sm={ 12 } md={ 9 }>
+      }}>
+        <Grid height="100%" container spacing={2}>
+          <Grid style={{ height: '100%', minHeight: '300px' }} item xs={12} sm={12} md={9}>
             <Outlet/>
           </Grid>
-          <Grid item xs={ 12 } sm={ 12 } md={ 3 }>
+          <Grid item xs={12} sm={12} md={3}>
             <SummaryView/>
           </Grid>
         </Grid>
@@ -30,10 +31,10 @@ const GameView: React.ComponentType = () => {
   )
 };
 
-const PageView: React.ComponentType = () => {
+const PageView: React.ComponentType<WithGameId> = ({ gameId }) => {
   const dispatch = useDispatch();
   React.useEffect(() => {
-    dispatch(list());
+    dispatch(list({ gameId }));
     return () => {
       dispatch(cleanup());
     };
@@ -45,4 +46,4 @@ const PageView: React.ComponentType = () => {
   );
 }
 
-export default PageView;
+export default withGameId(PageView);

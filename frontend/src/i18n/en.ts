@@ -69,6 +69,9 @@ const en = {
   'app.database.productions.table.headers.durability': 'Durability',
   'app.database.productions.table.headers.other': 'Also produced',
   'app.database.productions.table.headers.producedIn': 'Produced in',
+  // Main
+  'app.main.game': 'Games',
+  'app.main.add': 'Add',
   // Games
   'app.game.tabs.buildings': 'Buildings',
   'app.game.tabs.workers': 'Workers',

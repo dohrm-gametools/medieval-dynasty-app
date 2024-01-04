@@ -20,9 +20,9 @@ import { EnrichedTownBuilding, ProductionLine } from './services';
 export const reduxKey = 'game';
 const list = createAsyncThunk(
   `${reduxKey}/list`,
-  () => {
+  (payload: { gameId: string }) => {
     return Promise.all([
-        GameApi.one(),
+        GameApi.one(payload.gameId),
         BuildingsApi.fetchAll(),
         ProductionsApi.fetchAll(),
         ItemsApi.fetchAll(),

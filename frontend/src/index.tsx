@@ -10,6 +10,7 @@ import { default as baseI18n } from './i18n';
 import { I18nApi } from '~/src/api';
 import { appStore } from '~/src/app-config';
 import { I18nLoader } from '~/src/lib/i18n';
+import { MainLoader, GameSelectorView } from '~/src/app/main';
 import { BuildingsView, GameView, ProductionsView, WorkersView } from '~/src/app/game';
 
 import { GameIcon } from '~/src/app/main/components/game-icon';
@@ -61,50 +62,53 @@ const Application = () => (
     <Provider store={appStore}>
       <Auth0Provider domain="dohrm.eu.auth0.com" clientId="MKMfoFtjys1ZsB2i7wma9VwXqAwCv9oc" redirectUri={`${window.location.origin}/login`}>
         <AuthLoader>
-          <I18nLoader baseI18n={baseI18n} asyncI18nLoader={I18nApi.load}>
-            <ThemeProvider theme={theme}>
-              <BrowserRouter>
-                <AppContextProvider>
-                  <AppLayout
-                    title={'Medieval Dynasty'}
-                    routes={[
-                      {
-                        key: 'menu.game.title', path: '/game', children: [
-                          { key: 'app.game.tabs.workers', path: '/game/workers', icon: <GameIcon path="/workers.png"/> },
-                          { key: 'app.game.tabs.buildings', path: '/game/buildings', icon: <GameIcon path="/buildings.png"/> },
-                          { key: 'app.game.tabs.productions', path: '/game/productions', icon: <GameIcon path="/crafting.png"/> },
-                        ]
-                      },
-                      {
-                        key: 'menu.database.title', path: '/databases', children: [
-                          { key: 'app.database.tabs.buildings', path: '/databases/buildings', icon: <GameIcon path="/buildings-db.png"/> },
-                          { key: 'app.database.tabs.items', path: '/databases/items', icon: <GameIcon path="/inventory-db.png"/> },
-                          { key: 'app.database.tabs.productions', path: '/databases/productions', icon: <GameIcon path="/production-db.png"/> },
-                        ]
-                      },
-                    ]}>
-                    <Routes>
-                      <Route path="/" element={<Outlet/>}>
-                        <Route path="game" element={<GameView/>}>
-                          <Route path="workers" element={<WorkersView/>}/>
-                          <Route path="buildings" element={<BuildingsView/>}/>
-                          <Route path="productions" element={<ProductionsView/>}/>
-                          <Route index element={<Redirect to="/game/workers"/>}/>
+          <MainLoader>
+            <I18nLoader baseI18n={baseI18n} asyncI18nLoader={I18nApi.load}>
+              <ThemeProvider theme={theme}>
+                <BrowserRouter>
+                  <AppContextProvider>
+                    <AppLayout
+                      title={'Medieval Dynasty'}
+                      TitleToolbar={GameSelectorView}
+                      routes={[
+                        {
+                          key: 'menu.game.title', path: '/game', children: [
+                            { key: 'app.game.tabs.workers', path: '/game/workers', icon: <GameIcon path="/workers.png"/> },
+                            { key: 'app.game.tabs.buildings', path: '/game/buildings', icon: <GameIcon path="/buildings.png"/> },
+                            { key: 'app.game.tabs.productions', path: '/game/productions', icon: <GameIcon path="/crafting.png"/> },
+                          ]
+                        },
+                        {
+                          key: 'menu.database.title', path: '/databases', children: [
+                            { key: 'app.database.tabs.buildings', path: '/databases/buildings', icon: <GameIcon path="/buildings-db.png"/> },
+                            { key: 'app.database.tabs.items', path: '/databases/items', icon: <GameIcon path="/inventory-db.png"/> },
+                            { key: 'app.database.tabs.productions', path: '/databases/productions', icon: <GameIcon path="/production-db.png"/> },
+                          ]
+                        },
+                      ]}>
+                      <Routes>
+                        <Route path="/" element={<Outlet/>}>
+                          <Route path="game" element={<GameView/>}>
+                            <Route path="workers" element={<WorkersView/>}/>
+                            <Route path="buildings" element={<BuildingsView/>}/>
+                            <Route path="productions" element={<ProductionsView/>}/>
+                            <Route index element={<Redirect to="/game/workers"/>}/>
+                          </Route>
+                          <Route path="databases" element={<DatabasesView/>}>
+                            <Route path="buildings" element={<BuildingsListView/>}/>
+                            <Route path="items" element={<ItemsListView/>}/>
+                            <Route path="productions" element={<ProductionsListView/>}/>
+                            <Route index element={<Redirect to="/databases/buildings"/>}/>
+                          </Route>
+                          <Route index element={<Redirect to="/game"/>}/>
                         </Route>
-                        <Route path="databases" element={<DatabasesView/>}>
-                          <Route path="buildings" element={<BuildingsListView/>}/>
-                          <Route path="items" element={<ItemsListView/>}/>
-                          <Route path="productions" element={<ProductionsListView/>}/>
-                          <Route index element={<Redirect to="/databases/buildings"/>}/>
-                        </Route>
-                        <Route index element={<Redirect to="/game"/>}/>
-                      </Route>
-                    </Routes>
-                  </AppLayout>
-                </AppContextProvider>
-              </BrowserRouter>
-            </ThemeProvider>
-          </I18nLoader>
+                      </Routes>
+                    </AppLayout>
+                  </AppContextProvider>
+                </BrowserRouter>
+              </ThemeProvider>
+            </I18nLoader>
+          </MainLoader>
         </AuthLoader>
       </Auth0Provider>
     </Provider>

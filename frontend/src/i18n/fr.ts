@@ -78,6 +78,9 @@ const fr: { [ key: string ]: string } = {
   'app.database.productions.table.headers.durability': 'Durabilité',
   'app.database.productions.table.headers.other': 'Produit également',
   'app.database.productions.table.headers.producedIn': 'Produit dans',
+  // Main
+  'app.main.game': 'Parties',
+  'app.main.add': 'Ajouter',
   // Games
   'app.game.tabs.workers': 'Travailleurs',
   'app.game.tabs.houses': 'Maisons',
