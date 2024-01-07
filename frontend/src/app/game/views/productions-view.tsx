@@ -92,6 +92,10 @@ const ProductionsTable: React.ComponentType<{
         sortable: true,
         accessor: b => (summaryByProduct[b.itemId]?.consumed || 0) * -1
       }),
+      createColumnDef('sold', 20, 'app.game.productions', t, {
+        sortable: true,
+        accessor: b => (summaryByProduct[b.itemId]?.sold || 0) * -1
+      }),
       createColumnDef('total', 20, 'app.game.productions', t, {
         sortable: true,
         accessor: b => (summaryByProduct[b.itemId]?.balance || 0)

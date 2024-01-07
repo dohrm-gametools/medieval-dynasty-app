@@ -48,6 +48,9 @@ const GameDetails: React.ComponentType<{ game: EnrichedGame, summary: DailySumma
         <Grid item xs={ 12 }>
           <Typography>{ t('app.game.summary.tax.title') }: { summary.totalTax }</Typography>
         </Grid>
+        <Grid item xs={ 12 }>
+          <Typography>{ t('app.game.summary.sold.title') }: { summary.totalSale }</Typography>
+        </Grid>
       </Grid>
     );
   }
@@ -103,7 +106,7 @@ const ProductionDetails: React.ComponentType<{ summary: DailySummary, t: (key: s
           <TableRow key={ prod.id }>
             <TableCell>{ t(`db.items.${ prod.id }`) }</TableCell>
             <TableCell>{ prod.produced }</TableCell>
-            <TableCell>{ prod.consumed }</TableCell>
+            <TableCell>{ prod.consumed + prod.sold }</TableCell>
             <TableCell>{ prod.balance }</TableCell>
           </TableRow>
         )) }

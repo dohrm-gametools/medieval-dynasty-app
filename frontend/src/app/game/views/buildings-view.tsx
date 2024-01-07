@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ButtonGroup, IconButton } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { ColumnDef, createColumnDef, generateSortFunction, Table } from '~/src/lib/table';
-import { Building, BuildingCreationId, Production, TownBuilding } from '~/src/api';
+import { Building, BuildingCreationId, Item, Production, TownBuilding } from '~/src/api';
 import { useI18n } from '~/src/lib/i18n';
 import { Dropdown, DropdownOptionGrouped } from '~/src/lib/dropdown';
 import { Kind } from '~/src/api/buildings';
@@ -19,6 +19,7 @@ function createDraft(buildingId: string): TownBuilding {
     buildingId,
     assignedWorker: [],
     productions: [],
+    sells: [],
   }
 }
 
@@ -58,11 +59,12 @@ const BuildingsTable: React.ComponentType<{
   game: EnrichedGame,
   buildings: Array<BuildingByCategory>,
   rawBuildings: { [key: string]: Building },
+  items: Array<Item>,
   productions: Array<Production>
 }> =
   ({
      game,
-     buildings,
+     items,
      rawBuildings,
      productions
    }) => {
@@ -71,7 +73,7 @@ const BuildingsTable: React.ComponentType<{
     const [selected, setSelected] = React.useState<TownBuilding | undefined>()
     const [sort, setSort] = React.useState<string>('');
     const options = React.useMemo(() => buildOptions(rawBuildings, t), [rawBuildings, lang])
-
+    console.log(items.length);
     const onEdit = (b: TownBuilding) => {
       setSelected(b);
     }
@@ -119,6 +121,7 @@ const BuildingsTable: React.ComponentType<{
           }
         />
         {selected ? <BuildingForm
+          items={selected?.buildingId === 'market-stall' ? items : []}
           building={{ ...selected }}
           productions={productions.slice()}
           rawBuildings={{ ...rawBuildings }}
@@ -135,12 +138,13 @@ const BuildingsView: React.ComponentType = () => {
   const buildings = useSelector(selectors.buildingsByCategory);
   const rawBuildings = useSelector(selectors.rawBuildingById);
   const productions = useSelector(selectors.productions);
+  const items = useSelector(selectors.items);
   const groupedBuildings = Object.keys(buildings).reduce<Array<BuildingByCategory>>((acc, c) => {
     return [...acc, { id: c, buildings: buildings[c] || [] }]
   }, []);
   return (
     <SectionPageView>
-      <BuildingsTable buildings={groupedBuildings} game={game} productions={productions} rawBuildings={rawBuildings}/>
+      <BuildingsTable buildings={groupedBuildings} game={game} productions={productions} rawBuildings={rawBuildings} items={items}/>
     </SectionPageView>
   );
 };

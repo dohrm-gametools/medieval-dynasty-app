@@ -173,6 +173,7 @@ export const selectors = {
   listLoaded(state: State) { return state.game.listLoaded },
   game(state: State) { return state.game.game },
   productions(state: State) { return state.game.productions },
+  items(state: State) { return state.game.items },
   productionLines(state: State) { return services.getProductionLines(state.game.game, state.game.productions) },
   tools(state: State) { return state.game.items },
   rawBuildingById(state: State) {

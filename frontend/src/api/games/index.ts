@@ -3,12 +3,19 @@ export interface ProductionWithAssignment {
   productionValue: number;
 }
 
+export interface SellsWithAssignment {
+  objectId: string;
+  quantity: number;
+  value: number;
+}
+
 export interface TownBuilding {
   id: string;
   buildingId: string;
   alias?: string;
   assignedWorker: Array<string>;
   productions: Array<ProductionWithAssignment>;
+  sells?: Array<SellsWithAssignment>;
 }
 
 export interface Worker {

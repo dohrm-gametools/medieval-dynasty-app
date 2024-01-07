@@ -5,12 +5,19 @@ type ProductionWithAssignment struct {
 	ProductionValue float32 `json:"productionValue" bson:"productionValue"`
 }
 
+type SellsWithAssignment struct {
+	ObjectId string  `json:"objectId" bson:"objectId"`
+	Quantity float32 `json:"quantity" bson:"quantity"`
+	Value    float32 `json:"value" bson:"value"`
+}
+
 type TownBuilding struct {
 	Id             string                     `json:"id" bson:"id"`
 	BuildingId     string                     `json:"buildingId" bson:"buildingId"`
 	Alias          *string                    `json:"alias,omitempty" bson:"alias,omitempty"`
 	AssignedWorker []string                   `json:"assignedWorker" bson:"assignedWorker"`
 	Productions    []ProductionWithAssignment `json:"productions" bson:"productions"`
+	Sells          []SellsWithAssignment      `json:"sells,omitempty" bson:"sells,omitempty"`
 }
 
 type Sex = string

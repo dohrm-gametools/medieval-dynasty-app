@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, InputAdornment, MenuItem, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { Building, Production, TownBuilding, Worker } from '~/src/api';
+import { Building, Item, Production, SellsWithAssignment, TownBuilding, Worker } from '~/src/api';
 import { With18nProps, withI18n } from '~/src/lib/i18n';
 import { Kind } from '~/src/api/buildings';
 
@@ -22,13 +22,18 @@ function filterWorkers(allWorkers: Array<Worker>, selected: Array<string>): Arra
   ];
 }
 
-function prepareState(state: TownBuilding, building: Building, productions: Array<Production>): State {
+function prepareState(state: TownBuilding, building: Building, productions: Array<Production>, items: Array<Item>): State {
   const maxLength = (building.category === Kind.House ? building.capacity : building.worker) || 0;
   const assignedWorker: Array<string> = [];
   for (let i = 0; i < maxLength; ++i) {
     if (state.assignedWorker.length > i) assignedWorker.push(state.assignedWorker[i]);
     else assignedWorker.push(EmptyWorker);
   }
+  const currentById: { [id: string]: number } = (state.sells || [])
+    .reduce(
+      (acc, c) => ({ ...acc, [c.objectId]: c.quantity }),
+      {}
+    )
 
   return {
     ...state,
@@ -39,6 +44,7 @@ function prepareState(state: TownBuilding, building: Building, productions: Arra
         productionValue: state.productions.find(sp => sp.productionId === p.id)?.productionValue || 0,
       };
     }).slice(),
+    sells: items.map(i => ({ objectId: i.id, value: i.price / 2, quantity: currentById[i.id] || 0 }))
   };
 }
 
@@ -48,6 +54,7 @@ interface CmpState {
   baseBuilding: Building;
   productionsById: { [key: string]: Production };
   productionFilter: string;
+  sellsFilter: string;
 }
 
 function sanitize(value: string): string {
@@ -57,6 +64,7 @@ function sanitize(value: string): string {
 class BuildingForm extends React.Component<{
   building: TownBuilding,
   productions: Array<Production>,
+  items: Array<Item>,
   rawBuildings: { [key: string]: Building },
   workers: Array<Worker>,
   onSave: (updated: TownBuilding) => void,
@@ -66,11 +74,12 @@ class BuildingForm extends React.Component<{
   componentDidMount() {
     // Initialize state
     this.setState({
-      data: prepareState(this.props.building, this.props.rawBuildings[this.props.building.buildingId], this.props.productions),
+      data: prepareState(this.props.building, this.props.rawBuildings[this.props.building.buildingId], this.props.productions, this.props.items),
       availableWorkers: filterWorkers(this.props.workers, this.props.building.assignedWorker),
       baseBuilding: this.props.rawBuildings[this.props.building.buildingId],
       productionsById: this.props.productions.reduce((acc, c) => ({ ...acc, [c.id]: c }), {}),
       productionFilter: '',
+      sellsFilter: '',
     });
   }
 
@@ -86,6 +95,11 @@ class BuildingForm extends React.Component<{
       const productions = [...this.state.data.productions];
       productions[idx] = { ...productions[idx], productionValue: parseFloat(value) };
       newData = { ...this.state.data, productions };
+    } else if (name.indexOf('sell:') === 0) {
+      const idx = parseInt(name.substring('sell:'.length));
+      const sells = [...(this.state.data.sells || [])];
+      sells[idx] = { ...sells[idx], quantity: parseFloat(value) };
+      newData = { ...this.state.data, sells };
     } else {
       newData = { ...this.state.data, [name]: value };
     }
@@ -103,6 +117,7 @@ class BuildingForm extends React.Component<{
       ...data,
       assignedWorker: data.assignedWorker.filter(w => w !== EmptyWorker),
       productions: data.productions.filter(p => p.productionValue > 0),
+      sells: (data.sells || []).filter(s => s.quantity > 0),
     })
   };
 
@@ -111,10 +126,25 @@ class BuildingForm extends React.Component<{
   render() {
     if (!this.state) return null;
     const { t } = this.props;
-    const { data: state, availableWorkers, baseBuilding, productionsById, productionFilter } = this.state;
+    const {
+      data: state,
+      availableWorkers,
+      baseBuilding,
+      productionsById,
+      productionFilter,
+      sellsFilter,
+    } = this.state;
     const productions = state.productions.map(((d, idx) => ({ ...d, production: productionsById[d.productionId], idx })));
     const filteredProductions = productions
-      .filter(v => productionFilter === '' || sanitize(t(`db.items.${v.production?.itemId}`)).indexOf(sanitize(productionFilter)) > -1)
+      .filter(v =>
+        productionFilter === '' ||
+        sanitize(t(`db.items.${v.production?.itemId}`)).indexOf(sanitize(productionFilter)) > -1
+      );
+    const sells = (state.sells || []).map((d, idx) => ({ ...d, idx }));
+    const filteredSells = sells.filter(v =>
+      sellsFilter === '' ||
+      sanitize(t(`db.items.${v.objectId}`)).indexOf(sanitize(sellsFilter)) > -1
+    ).slice(0, 25);
     return (
       <Dialog open maxWidth="md" fullWidth aria-labelledby="form-dialog" disableEscapeKeyDown disablePortal>
         <DialogTitle id="form-dialog">{t('app.game.tabs.buildings')} ({t(`db.buildings.${baseBuilding.id}`)})</DialogTitle>
@@ -176,6 +206,41 @@ class BuildingForm extends React.Component<{
                     sx={{ width: '100%' }}
                     label={`${t(`db.items.${prod.itemId}`)}${prod.stack > 1 ? ` x ${prod.stack}` : ''}`}
                     helperText={recipe || ' '}
+                  />
+                </Grid>
+              )
+            })}
+            {sells.length > 0 ?
+              <>
+                <Grid item xs={12}/>
+                <Grid item xs={4}><h3>{t(`app.game.building.sells`)}</h3></Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    sx={{ width: '100%' }}
+                    InputProps={{
+                      startAdornment: (<InputAdornment position='start'><SearchIcon/></InputAdornment>)
+                    }}
+                    value={sellsFilter}
+                    onChange={(e) => this.setState({ sellsFilter: e.target.value })}
+                  />
+                </Grid>
+              </> : null
+            }
+            {filteredSells.map(d => {
+              const idx = d.idx;
+              const quantity = d.quantity;
+              const value = d.value;
+              return (
+                <Grid item key={`group-sell-${idx}`} xs={6}>
+                  <TextField
+                    key={`sells-${idx}`}
+                    type="number"
+                    value={quantity}
+                    name={`sell:${idx}`}
+                    onChange={(e) => this.onChange({ name: e.target.name, value: e.target.value })}
+                    sx={{ width: '100%' }}
+                    label={`${t(`db.items.${d.objectId}`)}`}
+                    helperText={`${value}`}
                   />
                 </Grid>
               )
