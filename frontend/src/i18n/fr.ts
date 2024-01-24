@@ -7,6 +7,7 @@ const fr: { [ key: string ]: string } = {
   'db.tools.axe': 'Hache',
   'db.tools.fishingSpear': 'Harpon de pêche',
   'db.tools.hammer': 'Marteau',
+  'db.tools.hoe': 'Houe',
   'db.tools.knife': 'Couteau',
   'db.tools.shovel': 'Pelle',
   'db.tools.sickle': 'Faucille',
